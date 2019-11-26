@@ -4,8 +4,8 @@ import java.sql.*;
 public class sql {
 	
 /*	
-		try(connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815"){
-			stmt = con.createStatement();
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			Statement stmt = con.createStatement();
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
