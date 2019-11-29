@@ -1,6 +1,9 @@
 package assignment;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 public class LoginPanel extends JPanel {
 	public LoginPanel() {
@@ -60,7 +63,22 @@ public class LoginPanel extends JPanel {
 	protected JTextField textFieldPassword = new JPasswordField(30);
     protected JButton buttonLogin = new JButton("Login"); 
     protected JButton buttonBack = new JButton("Back"); 
+    
     public void addListeners(JFrame parent) {
-
+    	buttonBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	parent.getContentPane().removeAll();
+            	MainPanel nextPanel = new MainPanel();
+            	nextPanel.addListeners(parent);
+            	parent.getContentPane().add(nextPanel);
+            	parent.revalidate(); 
+            	parent.repaint(); 
+            }
+        });
+        buttonLogin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	
+            }
+        });
     }
 }

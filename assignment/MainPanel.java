@@ -37,13 +37,20 @@ public class MainPanel extends JPanel {
     public void addListeners(JFrame parent) {
         buttonNewAuthor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	//AuthorPanel
+            	parent.getContentPane().removeAll();
+            	AuthorPanel nextPanel = new AuthorPanel();
+            	nextPanel.addListeners(parent);
+            	parent.getContentPane().add(nextPanel, BorderLayout.CENTER);
+            	parent.revalidate(); 
+            	parent.repaint(); 
             }
         });
         buttonLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	parent.getContentPane().removeAll();
-            	parent.getContentPane().add(new LoginPanel(), BorderLayout.CENTER);
+            	LoginPanel nextPanel = new LoginPanel();
+            	nextPanel.addListeners(parent);
+            	parent.getContentPane().add(nextPanel, BorderLayout.CENTER);
             	parent.revalidate(); 
             	parent.repaint(); 
             }
