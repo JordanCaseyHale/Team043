@@ -25,12 +25,21 @@ public class MySQLConnection {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
 			Statement stmt = con.createStatement();
 			//gets results
-			//Could check string to improve sercuity
+			//Could check string to improve security
 			results = stmt.executeQuery(query);
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
 		}
 		return results;
+	}
+	
+	public static boolean doUpdate(String update) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")) {
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(update);
+			return true;
+		} catch (SQLException ex) {ex.printStackTrace();
+			return false;}
 	}
 }
