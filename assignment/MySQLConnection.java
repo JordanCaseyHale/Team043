@@ -43,8 +43,9 @@ public class MySQLConnection {
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate(update);
 			return true;
-		} catch (SQLException ex) {ex.printStackTrace();
-			return false;}
+		} catch (SQLException ex) {ex.printStackTrace();}
+		return false;
+	}
 
 	//Basic sql injection prevention, add to as you think required
 	private static String checkInput(String query) {
