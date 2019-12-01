@@ -74,7 +74,9 @@ public class AuthorTasks {
 	 * 
 	 * @param response
 	 */
-	public static void submitReviewResponse(String response) {
+	public static void submitReviewResponse(String response, int subID, int revID) {
 		//SQL statement to add response to database
+		String str = String.format("INSERT Response INTO Reviews WHERE SubID = %2d, RevID = %2d", subID, revID);
+		MySQLConnection.doUpdate(str);
 	}
 }

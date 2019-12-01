@@ -134,13 +134,14 @@ public class JournalList {
 		MySQLConnection.closeConnection(con);
 		return null;
 		*/
-		String str = String.format("SELECT Name FROM Article WHERE ISSN = %s, Volume = %s, Edition = %s",journal, volume, edition);
+		String str = String.format("SELECT Name, pageRange FROM Article WHERE ISSN = %s, Volume = %s, Edition = %s",journal, volume, edition);
 		ResultSet results = MySQLConnection.doQuery(str);
 		try {
 			String[] articles = null;
 			int count = 0;
 			while (results.next()) {
-				articles[count] = results.getString(1); //Need to combine Month and Edition
+				articles[count] = results.getString(0); //Need to combine Month and Edition
+				
 				count += 1;
 			}
 			return articles;
