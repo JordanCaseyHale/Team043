@@ -35,11 +35,11 @@ public class Main {
 			if(userType == "Editor") {
 				result = MySQLConnection.doQuery("SELECT password FROM account WHERE Email = email AND account.Email = journalEditors.Email AND account.Email = journal.ChiefEditor");
 			}
-			else if(userType == "Author") {
-				result = MySQLConnection.doQuery("SELECT password FROM account WHERE Email = email AND account.Email = submissionAuthors.Email AND account.Email = submission.ChiefAuthor");
-			}
 			else {
-				result = MySQLConnection.doQuery("SELECT password FROM account WHERE Email = email AND account.email = reviewers.Email");
+				result = MySQLConnection.doQuery("SELECT password FROM account WHERE Email = email AND account.Email = submissionAuthors.Email AND account.Email = submission.ChiefAuthor");
+				if(result == null) {
+					result = MySQLConnection.doQuery("SELECT password FROM account WHERE Email = email AND account.email = reviewers.Email");
+				}
 			}
 			pass = result.getString(1);
 			if(pass == password) {
