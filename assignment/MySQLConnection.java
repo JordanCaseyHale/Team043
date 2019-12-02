@@ -24,24 +24,12 @@ public class MySQLConnection {
 		*/
 	}
 	
-	public static boolean doUpdate(String query) {
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			stmt.executeUpdate(query);
-			return true;
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-			return false;
-		}
-	}
-	
 	public static ResultSet doQuery(String query) {
 		ResultSet results = null;
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
 			Statement stmt = con.createStatement();
 			//gets results
-			//Could check string to improve sercuity
+			//Could check string to improve security
 			results = stmt.executeQuery(query);
 		}
 		catch (SQLException ex){
@@ -50,6 +38,15 @@ public class MySQLConnection {
 		return results;
 	}
 	
+	public static boolean doUpdate(String update) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")) {
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(update);
+			return true;
+		} catch (SQLException ex) {ex.printStackTrace();}
+		return false;
+	}
+
 	//Basic sql injection prevention, add to as you think required
 	private static String checkInput(String query) {
 		if(query.contains(";")) {
