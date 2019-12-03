@@ -10,9 +10,17 @@ public class ReviewerTasks {
 		
 		//Get info of author
 		//Get list of submissions where there are no conflicts
-		ResultSet results = MySQLConnection.doQuery("SELECT Affiliation FROM account WHERE submissionAuthor.Email = " + VARIABLE + " AND account.Email = submissionAuthor.Email");
-		String affil = results.getString(1);
-		results = MySQLConnection.doQuery("SELECT ?? FROM submission WHERE account.affiliation != affil AND subbmisionAuthors.Email = account.Email");
+		try {
+			String str = String.format("SELECT Affiliation FROM account WHERE submissionAuthor.Email = %s AND account.Email = submissionAuthor.Email", author);
+			ResultSet results = MySQLConnection.doQuery(str);
+			String affil = results.getString(1);
+			str = String.format("SELECT ?? FROM submission WHERE account.Affiliation != %s AND subbmisionAuthors.Email = account.Email",affil);
+			results = MySQLConnection.doQuery(str);
+		}
+		catch(Exception e) {
+			//output no results message
+		}
+		
 		//PROCESS RESULTS
 		
 	}
@@ -21,17 +29,8 @@ public class ReviewerTasks {
 	 * Submits a review
 	 */
 	public static void submitReview() {
-		boolean success = MySQLConnection.doUpdate("UPDATE reviews SET InitialVerdict = " + VARIABLE + " WHERE SubID = " + VARIABLE + " AND RevID = " + VARAIBLE);
-		if(success) {
-			//output success
-		}
-		else {
-			//output error
-		}
-	}
-	
-	public static void submitIntialVerdict(String verdict) {
-		boolean success = MySQLConnection.doUpdate("UPDATE reviews SET InitialReview = " + VARIABLE + " WHERE SubID = " + VARIABLE + " AND RevID = " + VARAIBLE);
+		String str = String.format("UPDATE reviews SET InitialReview = %s, InitialVerdict =  %s WHERE RevID = %d AND SubID = %s", "VARIABLES");
+		boolean success = MySQLConnection.doUpdate(str);
 		if(success) {
 			//output success
 		}
@@ -41,7 +40,8 @@ public class ReviewerTasks {
 	}
 	
 	public static void getResponses() {
-		ResultSet result = doQuery("SELECT Response FROM reviews WHERE RevID = " + VARAIBLE + " SubID = " + VARAIBLE);
+		String str = String.format("SELECT Response FROM reviews WHERE RevID = %d SubID = %d", "VARIABLES");
+		ResultSet result = MySQLConnection.doQuery(str);
 		if(result != null) {
 			//OUTPUT REVIEWS
 		}
@@ -53,7 +53,8 @@ public class ReviewerTasks {
 	public static void submitFinalVerdict() {
 		//SQL submitting final verdict
 		//If last review then removeReviewer
-		boolean success = MySQLConnection.doUpdate("UPDATE reviews SET InitialReview = " + VARIABLE + " WHERE SubID = " + VARIABLE + " AND RevID = " + VARAIBLE);
+		String str = String.format("UPDATE reviews SET FinalVerdict = %s WHERE RevID = %d AND SubID = %s", "VARIABLES");
+		boolean success = MySQLConnection.doUpdate(str);
 		if(success) {
 			//output success
 			checkLast();
@@ -65,7 +66,8 @@ public class ReviewerTasks {
 	}
 	
 	public static void checkLast() {
-		ResultSet results = MySQLConnection.doQuery("SELECT SubID FROM reviews WHERE RevID = " + Variable);
+		String str = String.format("SELECT SubID FROM reviews WHERE RevID = %d", "VARIABLE");
+		ResultSet results = MySQLConnection.doQuery(str);
 		if(results == null) {
 			removeReviewer();
 		}
@@ -73,6 +75,8 @@ public class ReviewerTasks {
 	}
 	
 	public static void removeReviewer() {
-		boolean author = MySQLConnection.doQuery("DELETE FROM reviewers WHERE RevID = " + variable);
+		String str = String.format("DELETE FROM reviewers WHERE RevID = %d", "VARIABLE");
+		MySQLConnection.doUpdate(str);
+		//Return to home page with messsage saying no more reviews left
 	}
 }
