@@ -10,7 +10,7 @@ public class MainHandler {
 		MainPanel introPanel = new MainPanel();
 		JFrame mainFrame = new JFrame();
 		mainFrame.setTitle("JournalManager");
-		mainFrame.setPreferredSize(new Dimension(700, 500));
+		mainFrame.setPreferredSize(new Dimension(800, 600));
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(introPanel, BorderLayout.CENTER);
 		introPanel.addListeners(mainFrame);

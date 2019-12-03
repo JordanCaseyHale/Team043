@@ -9,11 +9,12 @@ public class ReviewerTasks {
 	public static void getReviewsList(String author) {
 		
 		//Get info of author
-		//Get list of reviews where there are no conflicts
-		ResultSet results = MySQLConnection.doQuery("SELECT Affiliation FROM account WHERE submissionAuthor.Email = " + VARAIBLE + " AND account.Email = submissionAuthor.Email");
+		//Get list of submissions where there are no conflicts
+		ResultSet results = MySQLConnection.doQuery("SELECT Affiliation FROM account WHERE submissionAuthor.Email = " + VARIABLE + " AND account.Email = submissionAuthor.Email");
 		String affil = results.getString(1);
-		results = MySQLConnection.doQuery("SELECT SubID FROM submission WHERE account.affiliation != affil AND subbmisionAuthors.Email = account.Email");
+		results = MySQLConnection.doQuery("SELECT ?? FROM submission WHERE account.affiliation != affil AND subbmisionAuthors.Email = account.Email");
 		//PROCESS RESULTS
+		
 	}
 	
 	/**
