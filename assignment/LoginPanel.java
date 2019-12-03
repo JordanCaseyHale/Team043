@@ -77,6 +77,9 @@ public class LoginPanel extends JPanel {
         });
         buttonLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	//get info
+            	//checkLogin
+            	//go to relevant page
             	
             }
         });

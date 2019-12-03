@@ -38,8 +38,9 @@ public class AuthorTasks {
 		//SQL statement to get the status' of an author's articles
 		boolean result = false;
 		String str = String.format("SELECT Status FROM Article WHERE ArticleID = %2d",articleID);
-		ResultSet results = MySQLConnection.doQuery(str);
-		try {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			Statement stmt = con.createStatement();
+			ResultSet results = stmt.executeQuery(str);
 			String status = results.getString(0);
 			return status;
 		} catch (SQLException e) {e.printStackTrace();}
@@ -54,10 +55,11 @@ public class AuthorTasks {
 	public static List<List<String>> getSubmissionReviews(int subID) {
 		//SQL statement to get article reviews
 		String str = String.format("SELECT Initial Verdict, Response, Verdict FROM Reviews WHERE Sub ID = %2d",subID);
-		ResultSet results = MySQLConnection.doQuery(str);
 		List<String> temp = null;
 		List<List<String>> subReviews = null;
-		try {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			Statement stmt = con.createStatement();
+			ResultSet results = stmt.executeQuery(str);
 			while (results.next()) {
 				temp.add(results.getString(1));
 				temp.add(results.getString(2));
