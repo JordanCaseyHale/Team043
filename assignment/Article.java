@@ -5,7 +5,7 @@ public class Article {
 	
 	//Instance variables
 	private String name;
-	private int issn;
+	private String issn;
 	private int volume;
 	private int edition;
 	private String pageRange;
@@ -16,7 +16,7 @@ public class Article {
 	private List<List<String>> coAuthors;
 	
 	//Constructor
-	public Article(String name, int issn, int volume, int edition, String pageRange, String abstractPara, String pdfLink, String respondName, String respondEmail, List<List<String>> coAuthors) {
+	public Article(String name, String issn, int volume, int edition, String pageRange, String abstractPara, String pdfLink, String respondName, String respondEmail, List<List<String>> coAuthors) {
 		this.name = name;
 		this.issn = issn;
 		this.volume = volume;
@@ -35,7 +35,7 @@ public class Article {
 		return this.name;
 	}
 	
-	public int getISSN() {
+	public String getISSN() {
 		return this.issn;
 	}
 	
@@ -77,7 +77,7 @@ public class Article {
 		this.name = name;
 	}
 	
-	public void setISSN(int issn) {
+	public void setISSN(String issn) {
 		this.issn = issn;
 	}
 	

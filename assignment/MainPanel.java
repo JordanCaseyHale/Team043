@@ -25,11 +25,15 @@ public class MainPanel extends JPanel {
         
         String[] exampleData = {"Journal01","Journal02","Journal03"};
         //String[] journals = JournalList.getJournals();
+        /*
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        listModel.addElement("Journals1");
-        listModel.addElement("Journals2");
-        listModel.addElement("Journals3");
-        journalList = new JList(exampleData);
+		List<List<String>> journalsData = JournalList.getJournals();
+		for (int i=0; i<(journalsData.size());i++) {
+			listModel.addElement(journalsData.get(i).get(0) + ", " + journalsData.get(i).get(1));
+		}
+		*/
+        //journalList = new JList<String>(listModel);
+        journalList = new JList<String>(exampleData);
         journalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         journalList.setLayoutOrientation(JList.VERTICAL);
         journalList.setVisibleRowCount(-1);
@@ -42,7 +46,34 @@ public class MainPanel extends JPanel {
         bottomButtons.add(buttonBack);
         this.add(bottomButtons,BorderLayout.SOUTH);
         
-        listSection = "Journals";
+        JPanel articleDisplay = new JPanel();
+        articleDisplay.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.insets = new Insets(10, 10, 10, 10);
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        
+        articleDisplay.setPreferredSize(new Dimension(350, 420));
+        constraints.gridy = 0;
+        articleDisplay.add(articleName, constraints);
+        constraints.gridy = 1;
+        articleDisplay.add(issnNo, constraints);
+        constraints.gridy = 2;
+        articleDisplay.add(abstractText, constraints);
+        constraints.gridy = 3;
+        articleDisplay.add(pdfLink, constraints);
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        articleDisplay.add(respondingAuthor, constraints);
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        articleDisplay.add(respondingEmail, constraints);
+        constraints.gridx = 1;
+        constraints.gridy = 4;
+        articleDisplay.add(otherAuthors, constraints);
+        this.add(articleDisplay, BorderLayout.EAST);
+        
+        listSection = "Test";
     }
  
 	protected JButton buttonNewAuthor = new JButton("New Author");
@@ -51,6 +82,15 @@ public class MainPanel extends JPanel {
     protected JButton buttonBack = new JButton("Back");
     protected String listSection;
     protected String journal, volume, edition, article;
+    
+    //Article Display
+    protected JLabel articleName = new JLabel("Article: ");
+    protected JLabel issnNo = new JLabel("ISSN: ");
+    protected JLabel abstractText = new JLabel("Abstract: ");
+    protected JLabel pdfLink = new JLabel("PDF Link: ");
+    protected JLabel respondingAuthor = new JLabel("Responding Author: ");
+    protected JLabel respondingEmail = new JLabel("Email: ");
+    protected JLabel otherAuthors = new JLabel("Authors: ");
 
     
     public void addListeners(JFrame parent) {
@@ -83,8 +123,12 @@ public class MainPanel extends JPanel {
 					switch (listSection) {
 						case "Journal":
 							journal = valueSelected;
+							String[] parts = journal.split(",");
 							listSection = "Volume";
-							String[] volumes = JournalList.getVolumes(journal);
+							System.out.println(journal);
+							System.out.println("middle");
+							System.out.println(parts[1].trim());
+							String[] volumes = JournalList.getVolumes(parts[1].trim());
 							//Change list display
 							journalList.setListData(volumes);
 							break;
@@ -102,10 +146,20 @@ public class MainPanel extends JPanel {
 							break;
 						case "Articles":
 							article = valueSelected;
-							String[] pageRange = article.split(" ");
+							String[] info = article.split(" ");
+							String pageRange = info[1];
 							listSection = "Article";
-							Article article = JournalList.getArticle(pageRange[1], valueSelected, valueSelected, valueSelected);
+							Article article = JournalList.getArticle(pageRange, edition, volume, journal);
 							//Do something to display article
+							articleName.setText("Article: \n" + article.getName());
+							issnNo.setText("ISSN:\n" + article.getISSN());
+							abstractText.setText("Abstract: \n" + article.getAbstractPara());
+							pdfLink.setText("PDF Link:\n" + article.getPdfLink());
+							respondingAuthor.setText("Responding Author:\n" + article.getRespondName());
+							respondingEmail.setText("Email:\n" + article.getRespondEmail());
+							otherAuthors.setText("Authors:\n" + article.getCoAuthors());
+							break;
+							
 					}
 					/**
 					System.out.println(valueSelected);
@@ -123,6 +177,16 @@ public class MainPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				//Go back through List
 				switch (listSection) {
+					case "Articles":
+						String[] editions = JournalList.getEditions(volume, journal);
+						journalList.setListData(editions);
+						listSection = "Edition";
+						break;
+					case "Edition":
+						String[] volumes = JournalList.getVolumes(journal);
+						journalList.setListData(volumes);
+						listSection = "Volume";
+						break;
 					case "Volume":
 						List<List<String>> journalsData = JournalList.getJournals();
 						String[] journals = null;
@@ -130,6 +194,8 @@ public class MainPanel extends JPanel {
 							journals[i] = journalsData.get(i).get(1);
 						}
 						journalList.setListData(journals);
+						listSection = "Journal";
+						break;
 				}
 			}
 		});

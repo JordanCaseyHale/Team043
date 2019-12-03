@@ -5,41 +5,57 @@ public class MySQLConnection {
 	public static void main(String [] args) {
 		System.out.print(checkInput("TEST;ING"));
 		
-		/*
+		
 		try (Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043?user=team043&password=38796815")){
 			Statement stmt = con.createStatement();
 			System.out.println("start");
 			//stmt.executeUpdate("CREATE TABLE test (example varchar(20), fuckthis int);");
 			//stmt.executeUpdate("INSERT INTO test VALUES ('Yoooo', 69)");
-			ResultSet x = stmt.executeQuery("SELECT * FROM test");
-			String a= "W";
-			int b = 0;
+			ResultSet x = stmt.executeQuery("SELECT * FROM journal");
 			while (x.next()) {
-				a = x.getString(1);
-				b = x.getInt(2);
+				System.out.println(x.getString(1));
+				System.out.println(x.getString(2));
 			}
-			System.out.println(a + b);
 			System.out.println("end");
 		} catch (SQLException ex ) {ex.printStackTrace();}
-		*/
+		
 	}
 	
-	public static ResultSet doQuery(String query) {
-		ResultSet results = null;
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+	/*public static CachedRowSet doQuery(String query) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			Statement stmt = con.createStatement();
 			//gets results
 			//Could check string to improve security
-			results = stmt.executeQuery(query);
+			ResultSet results = stmt.executeQuery(query);
+			crs.populate(results);
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
 		}
-		return results;
+		return crs;
+	}*/
+	//Doesn't work because ResultSet is closed when try catch closes
+	
+	
+	/*
+	public static CachedRowSet doQuery(String query) {
+	try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+		Statement stmt = con.createStatement();
+		//gets results
+		//Could check string to improve security
+		ResultSet results = stmt.executeQuery(query);
+		crs.populate(results);
 	}
+	catch (SQLException ex){
+		ex.printStackTrace();
+	}
+		return crs;
+	}
+	*/
+	
 	
 	public static boolean doUpdate(String update) {
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")) {
 			Statement stmt = con.createStatement();
 			stmt.executeUpdate(update);
 			return true;
