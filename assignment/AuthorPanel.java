@@ -65,8 +65,13 @@ public class AuthorPanel extends JPanel {
             }
         });
         buttonMakeSubmission.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	
+        	public void actionPerformed(ActionEvent e) {
+            	parent.getContentPane().removeAll();
+            	SubmissionPanel nextPanel = new SubmissionPanel();
+            	nextPanel.addListeners(parent);
+            	parent.getContentPane().add(nextPanel);
+            	parent.revalidate(); 
+            	parent.repaint(); 
             }
         });
     }
