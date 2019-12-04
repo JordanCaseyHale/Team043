@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,9 +18,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 
+
 public class EditorTasksPanel extends JPanel {
-	public EditorTasksPanel() {
-		
+	
+	private String email;
+	
+	public EditorTasksPanel(String email) {
+		this.email = email;
 		//Check to see if has credentials here
         this.setLayout(new BorderLayout());
         
@@ -96,6 +101,10 @@ public class EditorTasksPanel extends JPanel {
     protected JList<String> journalList;
     
     public void addListeners(JFrame parent) {
-    	
+    	buttonLogout.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			
+    		}
+    	});
     }
 }

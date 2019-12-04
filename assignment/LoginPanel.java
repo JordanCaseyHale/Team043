@@ -81,7 +81,7 @@ public class LoginPanel extends JPanel {
             	//checkLogin
             	//go to relevant page
             	String email = textFieldEmail.getText();
-            	String password = textFieldPassword.getText();
+            	String password = textFieldPassword.getText().trim();
             	String userType;
             	if (buttonAuthorRole.isSelected()) {
             		userType = "Author";
@@ -90,17 +90,35 @@ public class LoginPanel extends JPanel {
             		userType = "Editor";
             	}
             	
-            	email = MySQLConnection.checkInput(email);
+            	//email = MySQLConnection.checkInput(email);
+            	System.out.println(email+" "+" "+password+" "+PasswordHash.getHashedString(password)+" "+userType);
             	
-            	boolean succ = Main.login(email, password, userType);
+            	boolean succ = Main.login(email, PasswordHash.getHashedString(password), userType);
             	if (succ) {
             		//go to relevant page
-            		System.out.println("succ");
+            		if (userType == "Author") {
+            			System.out.println("succ");
+                		parent.getContentPane().removeAll();
+                		AuthorTasksPanel nextPanel = new AuthorTasksPanel();
+                		nextPanel.addListeners(parent);
+                		parent.getContentPane().add(nextPanel);
+                		parent.revalidate(); 
+                		parent.repaint();
+            		}
+            		else {
+            			System.out.println("succ");
+                		parent.getContentPane().removeAll();
+                		EditorTasksPanel nextPanel = new EditorTasksPanel(email);
+                		nextPanel.addListeners(parent);
+                		parent.getContentPane().add(nextPanel);
+                		parent.revalidate(); 
+                		parent.repaint();
+            		}
             	}
             	else {
             		//Display error message
             		System.out.println("not succ");
-            		System.out.println("not succ".hashCode());
+            		System.out.println("not succ");
             		
             	}
             }

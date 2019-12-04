@@ -11,17 +11,26 @@ public class Submission {
 	private String name;
 	private String abstractPara;
 	private String pdfLink;
-	private String respondname;
+	private String respondTitle;
+	private String respondForename;
+	private String respondSurname;
 	private String respondEmail;
-	private List<List<String>> coAuthors;
+	private List<Author> coAuthors;
+	
+	//Default Constructor
+	public Submission() {
+		
+	}
 	
 	//Constructor
-	public Submission(String name, String abstractPara, String pdfLink, String respondName, String respondEmail,
-			List<List<String>> coAuthors, String[] reviews, String[] verdicts, String[] responses, String journal) {
+	public Submission(String name, String abstractPara, String pdfLink, String respondTitle, String respondForename, String respondSurname, String respondEmail,
+			List<Author> coAuthors, String[] reviews, String[] verdicts, String[] responses, String journal) {
 		this.setName(name);
 		this.abstractPara = abstractPara;
 		this.pdfLink = pdfLink;
-		this.respondname = respondName;
+		this.respondTitle = respondTitle;
+		this.respondForename = respondForename;
+		this.respondSurname = respondSurname;
 		this.respondEmail = respondEmail;
 		this.coAuthors = coAuthors;
 		this.reviews = reviews;
@@ -61,15 +70,23 @@ public class Submission {
 		return pdfLink;
 	}
 
-	public String getRespondname() {
-		return respondname;
+	public String getRespondTitle() {
+		return respondTitle;
+	}
+	
+	public String getRespondForename() {
+		return respondForename;
+	}
+	
+	public String getRespondSurname() {
+		return respondSurname;
 	}
 
 	public String getRespondEmail() {
 		return respondEmail;
 	}
 
-	public List<List<String>> getCoAuthors() {
+	public List<Author> getCoAuthors() {
 		return coAuthors;
 	}
 
@@ -78,7 +95,7 @@ public class Submission {
 	public void setReviews(String[] reviews) {
 		this.reviews = reviews;
 	}
-	public void setCoAuthors(List<List<String>> coAuthors) {
+	public void setCoAuthors(List<Author> coAuthors) {
 		this.coAuthors = coAuthors;
 	}
 
@@ -106,8 +123,16 @@ public class Submission {
 		this.pdfLink = pdfLink;
 	}
 	
-	public void setRespondname(String respondname) {
-		this.respondname = respondname;
+	public void setRespondTitle(String respondTitle) {
+		this.respondTitle = respondTitle;
+	}
+	
+	public void setRespondForename(String respondForename) {
+		this.respondForename = respondForename;
+	}
+	
+	public void setRespondSurname(String respondSurname) {
+		this.respondSurname = respondSurname;
 	}
 	
 	public void setRespondEmail(String respondEmail) {

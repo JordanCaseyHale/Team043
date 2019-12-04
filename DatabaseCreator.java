@@ -1,11 +1,12 @@
 import java.sql.*;
 
 import assignment.MySQLConnection;
+import assignment.PasswordHash;
 
 public class DatabaseCreator {
 	public static void main(String [] args) {
-		dbDrop();
-		dbCreation();
+		//dbDrop();
+		//dbCreation();
 		//dbSetUp();
 		/*
 		try (Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043?user=team043&password=38796815")){
@@ -24,8 +25,8 @@ public class DatabaseCreator {
 	public static void dbSetUp() {
 		try (Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")) {
 			Statement stmt = con.createStatement();
-			/*
 			System.out.println("start");
+			/*
 			ResultSet results = stmt.executeQuery("SELECT * FROM author WHERE AuthorID = 321 AND Email ");
 			while (results.next()) {
 				System.out.println(results.getString(1));
@@ -35,22 +36,27 @@ public class DatabaseCreator {
 				System.out.println(results.getString(5));
 			}
 			*/
-			System.out.println("end");
-			/*stmt.executeUpdate("DELETE FROM article");
+			/*
+			stmt.executeUpdate("DELETE FROM articleAuthors");
+			stmt.executeUpdate("DELETE FROM author");
+			stmt.executeUpdate("DELETE FROM article");
 			stmt.executeUpdate("DELETE FROM edition");
 			stmt.executeUpdate("DELETE FROM volume");
-			stmt.executeUpdate("DELETE FROM journal");*/
-			stmt.executeUpdate("INSERT INTO account VALUES ('TestEditor@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', 'password', 'Editor')");
+			stmt.executeUpdate("DELETE FROM journalEditors");
+			stmt.executeUpdate("DELETE FROM journal");
+			stmt.executeUpdate("DELETE FROM account");
+			*/
+			System.out.println(PasswordHash.getHashedString("password"));
+			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestEditor@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s', 'Editor')",PasswordHash.getHashedString("password")));
 			stmt.executeUpdate("INSERT INTO journal VALUES ('2019-0001', 'Test2 Journal', 'TestEditor@aol.com')");
 			stmt.executeUpdate("INSERT INTO	journalEditors VALUES ('TestEditor@aol.com', '2019-0001')");
 			stmt.executeUpdate("INSERT INTO volume VALUES ('2019-0001', 1, 2019)");
 			stmt.executeUpdate("INSERT INTO edition VALUES ('2019-0001', 1, 11, 'December')");
 			stmt.executeUpdate("INSERT INTO article VALUES (111, '2019-0001', 1, 11, '001-003', 'Test Article', 'Abstract paragraph', 'link')");
 			stmt.executeUpdate("INSERT INTO author VALUES (321, 'Mr', 'Test', 'Testy', 'TestAuthor@aol.com')");
-			
-			//stmt.executeQuery("INSERT INTO articleAuthors VALUES (321, ")
 			stmt.executeUpdate("INSERT INTO articleAuthors VALUES (321, 111)");
 			
+			System.out.println("end");
 		} catch (SQLException ex) {ex.printStackTrace();}
 	}
 	
