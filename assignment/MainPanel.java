@@ -122,7 +122,7 @@ public class MainPanel extends JPanel {
 			public void valueChanged(ListSelectionEvent e) {
 				if (!journalList.isSelectionEmpty()) {
 					String valueSelected = journalList.getSelectedValue();
-					journalList.clearSelection();
+					//journalList.clearSelection();
 					//System.out.println("start");
 					//Expand the select tree
 					
