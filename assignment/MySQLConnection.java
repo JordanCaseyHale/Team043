@@ -3,7 +3,7 @@ import java.sql.*;
 import java.util.*;
 public class MySQLConnection {
 	public static void main(String [] args) {
-		System.out.print(checkInput("TEST;ING"));
+		System.out.println(checkInput("TEST;ING"));
 		
 		
 		try (Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043?user=team043&password=38796815")){
@@ -11,10 +11,9 @@ public class MySQLConnection {
 			System.out.println("start");
 			//stmt.executeUpdate("CREATE TABLE test (example varchar(20), fuckthis int);");
 			//stmt.executeUpdate("INSERT INTO test VALUES ('Yoooo', 69)");
-			ResultSet x = stmt.executeQuery("SELECT * FROM journal");
+			ResultSet x = stmt.executeQuery("SELECT Edition FROM edition WHERE ISSN = '2019-0001' AND Volume = 1");
 			while (x.next()) {
-				System.out.println(x.getString(1));
-				System.out.println(x.getString(2));
+				System.out.println(x.getInt(1));
 			}
 			System.out.println("end");
 		} catch (SQLException ex ) {ex.printStackTrace();}
@@ -64,7 +63,7 @@ public class MySQLConnection {
 	}
 
 	//Basic sql injection prevention, add to as you think required
-	private static String checkInput(String query) {
+	public static String checkInput(String query) {
 		if(query.contains(";")) {
 			query = query.substring(0,query.indexOf(';'));
 		}

@@ -19,14 +19,14 @@ public class AuthorTasks {
 		} catch (SQLException e) {e.printStackTrace();}
 		*/
 		boolean result = false;
-		String str = String.format("INSERT INTO Submission VALUES (%s,%s,%s,%s)",title,abstractPara,mainAuthor,link);
+		String str = String.format("INSERT INTO submission VALUES (%s,%s,%s,%s)",title,abstractPara,mainAuthor,link);
 		result = MySQLConnection.doUpdate(str);
 		return result;
 	}
 	
 	public static boolean createAccount(String email, String title, String forename, String surname, String affiliation, String password) {
 		boolean result = false;
-		String str = String.format("INSERT INTO Account VALUES (%s,%s,%s,%s,%s,%s)",email,title,forename,surname,affiliation,password);
+		String str = String.format("INSERT INTO account VALUES (%s,%s,%s,%s,%s,%s)",email,title,forename,surname,affiliation,password);
 		result = MySQLConnection.doUpdate(str);
 		return result;
 	}
@@ -37,7 +37,7 @@ public class AuthorTasks {
 	public static String getArticleStatus(int articleID) {
 		//SQL statement to get the status' of an author's articles
 		boolean result = false;
-		String str = String.format("SELECT Status FROM Article WHERE ArticleID = %2d",articleID);
+		String str = String.format("SELECT Status FROM article WHERE ArticleID = %2d",articleID);
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			Statement stmt = con.createStatement();
 			ResultSet results = stmt.executeQuery(str);
@@ -54,7 +54,7 @@ public class AuthorTasks {
 	 */
 	public static List<List<String>> getSubmissionReviews(int subID) {
 		//SQL statement to get article reviews
-		String str = String.format("SELECT Initial Verdict, Response, Verdict FROM Reviews WHERE Sub ID = %2d",subID);
+		String str = String.format("SELECT Initial Verdict, Response, Verdict FROM reviews WHERE SubID = %2d",subID);
 		List<String> temp = null;
 		List<List<String>> subReviews = null;
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
@@ -78,7 +78,7 @@ public class AuthorTasks {
 	 */
 	public static void submitReviewResponse(String response, int subID, int revID) {
 		//SQL statement to add response to database
-		String str = String.format("INSERT Response INTO Reviews WHERE SubID = %2d, RevID = %2d", subID, revID);
+		String str = String.format("INSERT Response INTO reviews WHERE SubID = %2d, RevID = %2d", subID, revID);
 		MySQLConnection.doUpdate(str);
 	}
 }

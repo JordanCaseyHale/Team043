@@ -25,15 +25,15 @@ public class MainPanel extends JPanel {
         
         String[] exampleData = {"Journal01","Journal02","Journal03"};
         //String[] journals = JournalList.getJournals();
-        /*
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-		List<List<String>> journalsData = JournalList.getJournals();
+        
+        
+		List<Journal> journalsData = JournalList.getJournals();
 		for (int i=0; i<(journalsData.size());i++) {
-			listModel.addElement(journalsData.get(i).get(0) + ", " + journalsData.get(i).get(1));
+			listModel.addElement(journalsData.get(i).getTitle() + ", ISSN: " + journalsData.get(i).getISSN());
 		}
-		*/
-        //journalList = new JList<String>(listModel);
-        journalList = new JList<String>(exampleData);
+		
+        journalList = new JList<String>(listModel);
+        //journalList = new JList<String>(exampleData);
         journalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         journalList.setLayoutOrientation(JList.VERTICAL);
         journalList.setVisibleRowCount(-1);
@@ -73,7 +73,7 @@ public class MainPanel extends JPanel {
         articleDisplay.add(otherAuthors, constraints);
         this.add(articleDisplay, BorderLayout.EAST);
         
-        listSection = "Test";
+        listSection = "Journal";
     }
  
 	protected JButton buttonNewAuthor = new JButton("New Author");
@@ -81,7 +81,10 @@ public class MainPanel extends JPanel {
     protected JList<String> journalList;
     protected JButton buttonBack = new JButton("Back");
     protected String listSection;
-    protected String journal, volume, edition, article;
+    protected String article;
+    protected Journal journal = new Journal();
+    protected Volume volume = new Volume();
+    protected Edition edition = new Edition();
     
     //Article Display
     protected JLabel articleName = new JLabel("Article: ");
@@ -92,6 +95,7 @@ public class MainPanel extends JPanel {
     protected JLabel respondingEmail = new JLabel("Email: ");
     protected JLabel otherAuthors = new JLabel("Authors: ");
 
+    protected DefaultListModel<String> listModel = new DefaultListModel<>();
     
     public void addListeners(JFrame parent) {
         buttonNewAuthor.addActionListener(new ActionListener() {
@@ -116,48 +120,78 @@ public class MainPanel extends JPanel {
         });
 		journalList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting()) {
+				if (!journalList.isSelectionEmpty()) {
 					String valueSelected = journalList.getSelectedValue();
+					journalList.clearSelection();
+					//System.out.println("start");
 					//Expand the select tree
 					
 					switch (listSection) {
 						case "Journal":
-							journal = valueSelected;
-							String[] parts = journal.split(",");
+							journal.setISSN(valueSelected.split("ISSN:")[1].trim());
+							journal.setTitle(valueSelected.split("ISSN:")[0].trim());
 							listSection = "Volume";
-							System.out.println(journal);
-							System.out.println("middle");
-							System.out.println(parts[1].trim());
-							String[] volumes = JournalList.getVolumes(parts[1].trim());
+							//System.out.println(journal);
+							//System.out.println("middle");
+							//System.out.println(parts[1].trim());
+							List<Volume> volumes = JournalList.getVolumes(journal.getISSN());
+							//System.out.println(volumes);
 							//Change list display
-							journalList.setListData(volumes);
+							listModel.clear();
+							String str;
+							for (Volume v : volumes) {
+								str = "Year: "+v.getYear() + " Volume:" + v.getVolume();
+								listModel.addElement(str);
+							}
+							journalList.setModel(listModel);
 							break;
 						case "Volume":
-							volume = valueSelected;
+							volume.setVolume(Integer.parseInt(valueSelected.split("Volume:")[1].trim()));
+							volume.setYear(Integer.parseInt(valueSelected.split("Volume:")[0].replace("Year:", "").trim()));
 							listSection = "Edition";
-							String[] editions = JournalList.getEditions(volume, journal);
-							journalList.setListData(editions);
+							System.out.println("edition");
+							//System.out.println(volumeNo);
+							//System.out.println(journalName);
+							List<Edition> editions = JournalList.getEditions(volume.getVolume(), journal.getISSN());
+							listModel.clear();
+							for (Edition ed : editions) {
+								str = "Month: " + ed.getMonth() + " Edition: " + ed.getEdition();
+								listModel.addElement(str);
+							}
+							journalList.setModel(listModel);
 							break;
 						case "Edition":
-							edition = valueSelected;
+							edition.setEdition(Integer.parseInt(valueSelected.split("Edition:")[1].trim()));
+							edition.setMonth(valueSelected.split("Edition:")[0].replace("Month:","").trim());
 							listSection = "Articles";
-							String[] articles = JournalList.getArticles(edition, volume, journal);
-							journalList.setListData(articles);
+							List<String> articles = JournalList.getArticles(edition.getEdition(), volume.getVolume(), journal.getISSN());
+							listModel.clear();
+							for (String s : articles) {
+								listModel.addElement(s);
+							}
+							journalList.setModel(listModel);
 							break;
 						case "Articles":
 							article = valueSelected;
-							String[] info = article.split(" ");
-							String pageRange = info[1];
-							listSection = "Article";
-							Article article = JournalList.getArticle(pageRange, edition, volume, journal);
+							String[] info = article.split("Page Range:");
+							String pageRange = info[1].trim();
+							Article article = JournalList.getArticle(pageRange, edition.getEdition(), volume.getVolume(), journal.getISSN());
 							//Do something to display article
 							articleName.setText("Article: \n" + article.getName());
 							issnNo.setText("ISSN:\n" + article.getISSN());
 							abstractText.setText("Abstract: \n" + article.getAbstractPara());
 							pdfLink.setText("PDF Link:\n" + article.getPdfLink());
+							
 							respondingAuthor.setText("Responding Author:\n" + article.getRespondName());
 							respondingEmail.setText("Email:\n" + article.getRespondEmail());
-							otherAuthors.setText("Authors:\n" + article.getCoAuthors());
+							List<Author> authors = article.getCoAuthors();
+							String authorsText = "";
+							for (Author a: authors) {
+								authorsText += "\n"+a.getTitle()+", "+a.getForename()+" "+a.getSurname();
+							}
+							otherAuthors.setText("Authors:"+authorsText);
+							
+							System.out.println("Article should be displayed");
 							break;
 							
 					}
@@ -169,31 +203,44 @@ public class MainPanel extends JPanel {
 					}
 					x = false;
 					*/
-					System.out.println(valueSelected);
+					//System.out.println(valueSelected);
 				}
 			}
 		});
 		buttonBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Go back through List
+				
 				switch (listSection) {
 					case "Articles":
-						String[] editions = JournalList.getEditions(volume, journal);
-						journalList.setListData(editions);
+						List<Edition> editions = JournalList.getEditions(volume.getVolume(), journal.getISSN());
+						listModel.clear();
+						System.out.println("Back");
+						String str;
+						for (Edition ed : editions) {
+							str = "Month: " + ed.getMonth() + " Edition: " + ed.getEdition();
+							listModel.addElement(str);
+						}
+						journalList.setModel(listModel);
 						listSection = "Edition";
 						break;
 					case "Edition":
-						String[] volumes = JournalList.getVolumes(journal);
-						journalList.setListData(volumes);
+						List<Volume> volumes = JournalList.getVolumes(journal.getISSN());
+						listModel.clear();
+						for (Volume v : volumes) {
+							str = "Year: "+v.getYear() + " Volume:" + v.getVolume();
+							listModel.addElement(str);
+						}
+						journalList.setModel(listModel);
 						listSection = "Volume";
 						break;
 					case "Volume":
-						List<List<String>> journalsData = JournalList.getJournals();
-						String[] journals = null;
-						for (int i=0; i<(journalsData.size());i++) {
-							journals[i] = journalsData.get(i).get(1);
+						List<Journal> journals = JournalList.getJournals();
+						listModel.clear();
+						for (Journal j : journals) {
+							listModel.addElement(j.getTitle() + ", ISSN: " + j.getISSN());
 						}
-						journalList.setListData(journals);
+						journalList.setModel(listModel);
 						listSection = "Journal";
 						break;
 				}

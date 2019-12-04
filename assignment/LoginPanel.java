@@ -80,7 +80,29 @@ public class LoginPanel extends JPanel {
             	//get info
             	//checkLogin
             	//go to relevant page
+            	String email = textFieldEmail.getText();
+            	String password = textFieldPassword.getText();
+            	String userType;
+            	if (buttonAuthorRole.isSelected()) {
+            		userType = "Author";
+            	}
+            	else {
+            		userType = "Editor";
+            	}
             	
+            	email = MySQLConnection.checkInput(email);
+            	
+            	boolean succ = Main.login(email, password, userType);
+            	if (succ) {
+            		//go to relevant page
+            		System.out.println("succ");
+            	}
+            	else {
+            		//Display error message
+            		System.out.println("not succ");
+            		System.out.println("not succ".hashCode());
+            		
+            	}
             }
         });
     }

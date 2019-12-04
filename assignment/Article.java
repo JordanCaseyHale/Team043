@@ -4,6 +4,7 @@ import java.util.List;
 public class Article {
 	
 	//Instance variables
+	private int articleID;
 	private String name;
 	private String issn;
 	private int volume;
@@ -13,10 +14,11 @@ public class Article {
 	private String pdfLink;
 	private String respondName;
 	private String respondEmail;
-	private List<List<String>> coAuthors;
+	private List<Author> coAuthors;
 	
 	//Constructor
-	public Article(String name, String issn, int volume, int edition, String pageRange, String abstractPara, String pdfLink, String respondName, String respondEmail, List<List<String>> coAuthors) {
+	public Article(int articleID, String name, String issn, int volume, int edition, String pageRange, String abstractPara, String pdfLink, String respondName, String respondEmail, List<Author> coAuthors) {
+		this.articleID = articleID;
 		this.name = name;
 		this.issn = issn;
 		this.volume = volume;
@@ -29,7 +31,15 @@ public class Article {
 		this.coAuthors = coAuthors;
 	}
 	
+	//Empty constructor
+	public Article() {
+		
+	}
+	
 	//Get Methods
+	public int getArticleID() {
+		return this.articleID;
+	}
 	
 	public String getName() {
 		return this.name;
@@ -67,11 +77,14 @@ public class Article {
 		return this.respondEmail;
 	}
 	
-	public List<List<String>> getCoAuthors() {
+	public List<Author> getCoAuthors() {
 		return this.coAuthors;
 	}
 	
 	//Set Methods
+	public void setArticleID(int articleID) {
+		this.articleID = articleID;
+	}
 	
 	public void setName(String name) {
 		this.name = name;
@@ -109,7 +122,7 @@ public class Article {
 		this.respondEmail = respondEmail;
 	}
 	
-	public void setCoAuthors(List<List<String>> coAuthors) {
+	public void setCoAuthors(List<Author> coAuthors) {
 		this.coAuthors = coAuthors;
 	}
 }
