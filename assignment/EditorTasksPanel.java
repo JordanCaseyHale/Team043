@@ -1,5 +1,7 @@
 package assignment;
 
+import java.util.List;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -8,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.*;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,11 +20,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 public class EditorTasksPanel extends JPanel {
 	
-	private String email;
+	private static String email;
 	
 	public EditorTasksPanel(String email) {
 		this.email = email;
@@ -69,14 +74,19 @@ public class EditorTasksPanel extends JPanel {
         articleData.add(buttonAddToJournal, constraints); 
         this.add(articleData,BorderLayout.CENTER);        
  
-        journalList = new JList<String>();
-        journalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        journalList.setLayoutOrientation(JList.VERTICAL);
-        journalList.setVisibleRowCount(-1);
-        JScrollPane journalListScrollPane = new JScrollPane(journalList);
+        submissionList = new JList<String>();
+        submissionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        submissionList.setLayoutOrientation(JList.VERTICAL);
+        submissionList.setVisibleRowCount(-1);
+        JScrollPane journalListScrollPane = new JScrollPane(submissionList);
         journalListScrollPane.setPreferredSize(new Dimension(250, 80));
         
-        this.add(journalListScrollPane,BorderLayout.EAST);        
+        this.add(journalListScrollPane,BorderLayout.EAST);
+        
+		for (Submission s : subs) {
+			listModel.addElement(s.getName());
+		}
+		submissionList.setModel(listModel);
     }
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
 	
@@ -98,13 +108,45 @@ public class EditorTasksPanel extends JPanel {
     protected JButton buttonReject = new JButton("Reject");
     protected JButton buttonAddToJournal = new JButton("Add To Journal");
     
-    protected JList<String> journalList;
+    protected JList<String> submissionList;
+    
+    private DefaultListModel<String> listModel = new DefaultListModel<>();
+	private List<Submission> subs = EditorTasks.getSubmissions();
     
     public void addListeners(JFrame parent) {
     	buttonLogout.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			
+    			EditorTasksPanel.email = null;
+    			//go to main panel
+    			parent.getContentPane().removeAll();
+        		MainPanel nextPanel = new MainPanel();
+        		nextPanel.addListeners(parent);
+        		parent.getContentPane().add(nextPanel);
+        		parent.revalidate(); 
+        		parent.repaint();
     		}
+    	});
+    	//JList listener
+    	submissionList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				//enable buttons
+				if (!buttonReject.isEnabled()) {
+					buttonReject.enable();
+				}
+				if (!buttonAddToJournal.isEnabled()) {
+					buttonAddToJournal.enable();
+				}
+				//gets info to display
+				if (!submissionList.isSelectionEmpty()) {
+					int index = submissionList.getSelectedIndex();
+					Submission sub = subs.get(index);
+					labelArticleName.setText(sub.getName());
+					labelISSN.setText(sub.getJournal());
+					labelPDFLink.setText(sub.getPdfLink());
+				}
+				//uses the info to decide status
+				//disable certain buttons
+			}
     	});
     }
 }

@@ -7,6 +7,7 @@ public class Submission {
 	private String[] reviews;
 	private String[] verdicts;
 	private String[] responses;
+	private int subID;
 	private String journal;
 	private String name;
 	private String abstractPara;
@@ -24,7 +25,7 @@ public class Submission {
 	
 	//Constructor
 	public Submission(String name, String abstractPara, String pdfLink, String respondTitle, String respondForename, String respondSurname, String respondEmail,
-			List<Author> coAuthors, String[] reviews, String[] verdicts, String[] responses, String journal) {
+			List<Author> coAuthors, String[] reviews, String[] verdicts, String[] responses, String journal, int subID) {
 		this.setName(name);
 		this.abstractPara = abstractPara;
 		this.pdfLink = pdfLink;
@@ -37,6 +38,7 @@ public class Submission {
 		this.verdicts = verdicts;
 		this.responses = responses;
 		this.journal = journal;
+		this.subID = subID;
 	}
 	
 	
@@ -89,6 +91,10 @@ public class Submission {
 	public List<Author> getCoAuthors() {
 		return coAuthors;
 	}
+	
+	public int getSubID() {
+		return subID;
+	}
 
 	//Set Methods
 	
@@ -139,8 +145,7 @@ public class Submission {
 		this.respondEmail = respondEmail;
 	}
 	
-
-
-
-
+	public void setSubID(int subID) {
+		this.subID = subID;
+	}
 }
