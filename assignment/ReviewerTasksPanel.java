@@ -20,7 +20,24 @@ public class ReviewerTasksPanel extends JPanel {
         topButtons.add(buttonLogout);
         topButtons.add(buttonResetPassword);
         this.add(topButtons,BorderLayout.NORTH);
+
+        journalList = new JList<String>();
+        journalList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        journalList.setLayoutOrientation(JList.VERTICAL);
+        journalList.setVisibleRowCount(-1);
+        JScrollPane journalListScrollPane = new JScrollPane(journalList);
+        journalListScrollPane.setPreferredSize(new Dimension(200, 160));
         
+        this.add(journalListScrollPane,BorderLayout.CENTER);
+        
+        JPanel sideStuff = new JPanel();
+        sideStuff.setLayout(new BoxLayout(sideStuff, BoxLayout.Y_AXIS));
+        sideStuff.add(labelReviewsNeeded);
+        sideStuff.add(labelSideMessage);
+        sideStuff.add(buttonChooseArticles);
+        
+        
+        this.add(sideStuff,BorderLayout.EAST);
         JPanel articleData = new JPanel(new GridBagLayout());
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -45,20 +62,27 @@ public class ReviewerTasksPanel extends JPanel {
         constraints.gridy = 3;
         constraints.gridx = 0;
         constraints.gridwidth = 1;
-        articleData.add(buttonReview, constraints);
+        articleData.add(buttonReview, constraints);       
         
-        this.add(articleData,BorderLayout.CENTER);        
-
-        journalList = new JList<String>();
-        journalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        journalList.setLayoutOrientation(JList.VERTICAL);
-        journalList.setVisibleRowCount(-1);
-        JScrollPane journalListScrollPane = new JScrollPane(journalList);
-        journalListScrollPane.setPreferredSize(new Dimension(250, 80));
         
-        this.add(journalListScrollPane,BorderLayout.EAST);        
+        selectedJournalList = new JList<String>();
+        selectedJournalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        selectedJournalList.setLayoutOrientation(JList.VERTICAL);
+        selectedJournalList.setVisibleRowCount(-1);
+        JScrollPane selectedJournalListScrollPane = new JScrollPane(selectedJournalList);
+        selectedJournalListScrollPane.setPreferredSize(new Dimension(150, 160));
+        constraints.gridy = 0;
+        constraints.gridx = 2;
+        constraints.gridheight = 4;
+        constraints.gridwidth = 1;
+        
+        articleData.add(selectedJournalListScrollPane, constraints);  
+        this.add(articleData,BorderLayout.SOUTH); 
     }
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
+	
+	protected JLabel labelReviewsNeeded = new JLabel("Reviews to do: ");
+	protected JLabel labelSideMessage = new JLabel("Select Articles to Review");
 	
 	protected JLabel labelArticleName = new JLabel("Article: ");
     protected JLabel labelISSN = new JLabel("ISSN: ");
@@ -70,8 +94,11 @@ public class ReviewerTasksPanel extends JPanel {
     
     protected JButton buttonLogout = new JButton("Log Out");
     protected JButton buttonResetPassword = new JButton("Change Password");
-
+    protected JButton buttonChooseArticles = new JButton("Choose to Review");
+    
+    
     protected JList<String> journalList;
+    protected JList<String> selectedJournalList;
     
     public void addListeners(JFrame parent) {
     	
