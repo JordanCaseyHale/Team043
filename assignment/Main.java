@@ -2,6 +2,7 @@ package assignment;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -34,28 +35,29 @@ public class Main {
 		//Possibly make account object
 		String pass = "";
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
+			PreparedStatement pstmt = con.prepareStatement("SELECT password FROM account WHERE Email = ? AND userType = ?");
 			ResultSet result = null;
-			String str;
+			pstmt.setString(1, email);
 			if(userType == "Editor") {
-				str = String.format("SELECT * FROM journalEditors WHERE Email = %s", email);
-				result = stmt.executeQuery(str);
+				pstmt.setString(2, userType);
+				result = pstmt.executeQuery();
 				if (result.first()) {
-					str = String.format("SELECT password FROM account WHERE Email = %s", email);
-					result = stmt.executeQuery(str);
+					pass = result.getString(1);
+					System.out.println(pass);
 				}
 			}
 			else if(userType == "Author") {
-				str = String.format("SELECT * FROM submissionAuthors WHERE Email = %s",email);
-				result = stmt.executeQuery(str);
+				pstmt.setString(2, userType);
+				result = pstmt.executeQuery();
 				if (result.first()) {
-					str = String.format("SELECT password FROM account WHERE Email = %s", email);
-					result = stmt.executeQuery(str);
+					pass = result.getString(1);
+					System.out.println(pass);
 				}
 			}
-			pass = result.getString(1);
-			if(pass == password) {
+
+			if(pass.equals(password)) {
 				//take to correct page
+				System.out.println("Should succ");
 				return true;
 			}
 			else {

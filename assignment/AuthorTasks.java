@@ -24,9 +24,9 @@ public class AuthorTasks {
 		return result;
 	}
 	
-	public static boolean createAccount(String email, String title, String forename, String surname, String affiliation, String password) {
+	public static boolean createAccount(String email, String title, String forename, String surname, String affiliation, String password, String userType) {
 		boolean result = false;
-		String str = String.format("INSERT INTO account VALUES (%s,%s,%s,%s,%s,%s)",email,title,forename,surname,affiliation,password);
+		String str = String.format("INSERT INTO account VALUES (%s,%s,%s,%s,%s,%s,%s)",email,title,forename,surname,affiliation,password,userType);
 		result = MySQLConnection.doUpdate(str);
 		return result;
 	}

@@ -8,8 +8,11 @@ import java.util.Arrays;
 import javax.swing.*;
 
 public class SubmissionPanel extends JPanel {
-
-	public SubmissionPanel() {
+	
+	private Author author;
+	
+	public SubmissionPanel(Author author) {
+		this.author = author;
         this.setLayout(new BorderLayout());
         JPanel grid = new JPanel(new GridBagLayout());
         this.add(grid,BorderLayout.NORTH);
@@ -86,8 +89,13 @@ public class SubmissionPanel extends JPanel {
 
 	protected DefaultListModel<String> listModelCoauthors = new DefaultListModel<>();
 	protected JList<String> listCoauthors = new JList<String>(listModelCoauthors);	
-	protected ArrayList<ArrayList<String>> listCoauthorData = new ArrayList<ArrayList<String>>();
+	protected ArrayList<Author> listCoauthorData = new ArrayList<Author>();
 	protected ArrayList<String> mainAuthorData;
+	
+	protected String respondTitle;
+	protected String respondForename;
+	protected String respondSurname;
+	protected String respondEmail;
 	
 	protected JButton buttonAddCoauthor = new JButton("Add Co-author"); 
 	protected JButton buttonRemoveCoauthor = new JButton("Remove Co-author"); 
@@ -96,14 +104,21 @@ public class SubmissionPanel extends JPanel {
 	protected JTextArea textAreaAbstract = new JTextArea(20,10);
 	protected JTextField textFieldPDFLink = new JTextField(30);
 	
-	public void addCoauthor(String title, String forename, String surname, String email, String pwhash) {
+	public void addCoauthor(String title, String forename, String surname, String email, String affiliation, String pwhash) {
 		listModelCoauthors.addElement(title+". "+forename+" "+surname);
-		ArrayList<String> data = new ArrayList<>(Arrays.asList(title,forename,surname,email,pwhash));
+		//ArrayList<String> data = new ArrayList<>(Arrays.asList(title,forename,surname,email,pwhash));
+		//data into author object
+		Author data = new Author(title, forename, surname, email, affiliation, pwhash); 
+		//add author to list of coauthors
 		listCoauthorData.add(data);
 	}
 	
-	public void setMainAuthor(String title, String forename, String surname, String email, String pwhash) {
-		mainAuthorData = new ArrayList<String>(Arrays.asList(title,forename,surname,email,pwhash));
+	public void setMainAuthor(String title, String forename, String surname, String email) {
+		//mainAuthorData = new ArrayList<String>(Arrays.asList(title,forename,surname,email,pwhash));
+		respondTitle = title;
+		respondForename = forename;
+		respondSurname = surname;
+		respondEmail = email;
 	}
 	
 	
@@ -122,7 +137,16 @@ public class SubmissionPanel extends JPanel {
         });
         buttonMakeSubmission.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
+            	//pass info to submission object
+            	Submission sub = new Submission();
+            	sub.setName(textFieldTitle.getText().trim());
+            	sub.setPdfLink(textFieldPDFLink.getText().trim());
+            	sub.setAbstractPara(textAreaAbstract.getText().trim());
+            	sub.setCoAuthors(listCoauthorData);
+            	sub.setRespondTitle(respondTitle);
+            	sub.setRespondForename(respondForename);
+            	sub.setRespondSurname(respondSurname);
+            	sub.setRespondEmail(respondEmail);
             }
         });
         SubmissionPanel parentSubPanel = this;
@@ -131,7 +155,7 @@ public class SubmissionPanel extends JPanel {
             	NewCoauthorDialog dlg = new NewCoauthorDialog(listModelCoauthors);
             	dlg.addListeners(parentSubPanel);
             	dlg.setVisible(true);
-            	
+            	//Add each co author info to list
             }
         });
         buttonRemoveCoauthor.addActionListener(new ActionListener() {

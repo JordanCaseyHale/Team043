@@ -11,12 +11,14 @@ public class NewCoauthorDialog extends JDialog {
 	protected JLabel labelForename = new JLabel ("Forename");
 	protected JLabel labelSurname = new JLabel ("Surname");
 	protected JLabel labelEmail = new JLabel ("Email");
+	protected JLabel labelAffiliation = new JLabel ("Affiliation");
 	protected JLabel labelPassword = new JLabel ("Password");
 	
 	protected JTextField textFieldTitle = new JTextField(10);
 	protected JTextField textFieldForename = new JTextField(30);
 	protected JTextField textFieldSurname = new JTextField(30);
 	protected JTextField textFieldEmail = new JTextField(30);
+	protected JTextField textFieldAffiliation = new JTextField(30);
 	protected JTextField textFieldPassword = new JPasswordField(30);
 	
 	protected JButton btnAddCoauthor = new JButton("Add Co-author");
@@ -66,6 +68,14 @@ public class NewCoauthorDialog extends JDialog {
 		constraints.weightx = 0.3;
 		constraints.gridx = 0;
 		constraints.gridy = 4;
+		panel.add(labelAffiliation, constraints);
+		constraints.weightx = 0.7;
+		constraints.gridx = 1;
+		panel.add(textFieldAffiliation,constraints);
+		
+		constraints.weightx = 0.3;
+		constraints.gridx = 0;
+		constraints.gridy = 5;
 		panel.add(labelPassword, constraints);
 		constraints.weightx = 0.7;
 		constraints.gridx = 1;
@@ -83,11 +93,11 @@ public class NewCoauthorDialog extends JDialog {
 	public void addListeners(SubmissionPanel parent) { 
 		btnAddCoauthor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	if(textFieldTitle.getText().isEmpty() || textFieldForename.getText().isEmpty() || textFieldSurname.getText().isEmpty() || textFieldEmail.getText().isEmpty() || textFieldPassword.getText().isEmpty()){
+            	if(textFieldTitle.getText().isEmpty() || textFieldForename.getText().isEmpty() || textFieldSurname.getText().isEmpty() || textFieldEmail.getText().isEmpty() || textFieldAffiliation.getText().isEmpty() || textFieldPassword.getText().isEmpty()){
             		JOptionPane.showMessageDialog(parent,"Not all fields were filled out.");
             	}
             	else{
-            		parent.addCoauthor(textFieldTitle.getText(),textFieldForename.getText(),textFieldSurname.getText(),textFieldEmail.getText(),PasswordHash.getHashedString(textFieldPassword.getText()));
+            		parent.addCoauthor(textFieldTitle.getText(),textFieldForename.getText(),textFieldSurname.getText(),textFieldEmail.getText(), textFieldAffiliation.getText(),PasswordHash.getHashedString(textFieldPassword.getText()));
             		dispose();
             	}
             }

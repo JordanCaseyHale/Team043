@@ -9,6 +9,7 @@ public class MainHandler {
 	{  
 		MainPanel introPanel = new MainPanel();
 		//EditorTasksPanel introPanel = new EditorTasksPanel();
+		//AuthorTasksPanel introPanel = new AuthorTasksPanel();
 		JFrame mainFrame = new JFrame();
 		mainFrame.setTitle("JournalManager");
 		mainFrame.setPreferredSize(new Dimension(800, 600));

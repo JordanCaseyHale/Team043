@@ -3,19 +3,21 @@ package assignment;
 public class Author {
 	
 	//Instance Variables
-	private int authorID;
 	private String title;
 	private String forename;
 	private String surname;
 	private String email;
+	private String affiliation;
+	private String pwhash;
 	
 	//Constructor
-	public Author(int authorID, String title, String forename, String surname, String email) {
-		this.authorID = authorID;
+	public Author(String title, String forename, String surname, String email, String affiliation, String pwhash) {
 		this.title = title;
 		this.forename = forename;
 		this.surname = surname;
 		this.email = email;
+		this.affiliation = affiliation;
+		this.pwhash = pwhash;
 	}
 	
 	//Default Constructor
@@ -24,9 +26,6 @@ public class Author {
 	}
 	
 	//Get methods
-	public int getAuthorID() {
-		return this.authorID;
-	}
 	
 	public String getTitle() {
 		return this.title;
@@ -44,10 +43,15 @@ public class Author {
 		return this.email;
 	}
 	
-	//Set methods
-	public void setAuthorID(int authorID) {
-		this.authorID = authorID;
+	public String getAffiliation() {
+		return this.affiliation;
 	}
+	
+	public String getPasswordhashed() {
+		return this.pwhash;
+	}
+	
+	//Set methods
 	
 	public void setTitle(String title) {
 		this.title = title;
@@ -63,5 +67,13 @@ public class Author {
 	
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public void setAffiliation(String affiliation) {
+		this.affiliation = affiliation;
+	}
+	
+	public void setPasswordHashed(String pwhash) {
+		this.pwhash = pwhash;
 	}
 }
