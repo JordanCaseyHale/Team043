@@ -8,7 +8,8 @@ import java.util.Arrays;
 import javax.swing.*;
 
 public class SubmissionPanel extends JPanel {
-	
+	//TODO: Dialog where you can allocate reviews and choose correnspondent
+	//TODO: add the journal selection combobox
 	private Author author;
 	
 	public SubmissionPanel(Author author) {
@@ -84,6 +85,7 @@ public class SubmissionPanel extends JPanel {
     }
 	protected JLabel labelTitle = new JLabel ("Title");
 	protected JLabel labelPDFLink = new JLabel ("PDF Link");
+	protected JLabel labelJournal = new JLabel ("Target Journal");
 	protected JLabel labelCoauthorList = new JLabel ("Co-Authors");
 	protected JLabel labelAbstract= new JLabel ("Article Abstract");
 	
