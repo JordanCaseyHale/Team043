@@ -16,7 +16,7 @@ public class SubmissionPanel extends JPanel {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.WEST;
         constraints.insets = new Insets(10, 10, 10, 10);
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.fill = GridBagConstraints.BOTH;
         constraints.weighty = 1;       
         constraints.weightx = 0.3;
         constraints.gridx = 0;
@@ -77,6 +77,7 @@ public class SubmissionPanel extends JPanel {
         bottomButtons.add(buttonBack);
         bottomButtons.add(buttonMakeSubmission);      
         this.add(bottomButtons,BorderLayout.SOUTH);
+        
     }
 	protected JLabel labelTitle = new JLabel ("Title");
 	protected JLabel labelPDFLink = new JLabel ("PDF Link");

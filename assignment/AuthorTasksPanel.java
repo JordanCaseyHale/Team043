@@ -87,6 +87,7 @@ public class AuthorTasksPanel extends JPanel {
         
         //////// only show when having reviewer privileges
         ReviewerTasksPanel rp = new ReviewerTasksPanel();
+        rp.addListeners();
         tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");
         
     }

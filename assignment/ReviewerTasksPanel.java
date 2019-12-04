@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -99,8 +101,15 @@ public class ReviewerTasksPanel extends JPanel {
     
     protected JList<String> journalList;
     protected JList<String> selectedJournalList;
-    
-    public void addListeners(JFrame parent) {
-    	
+    ReviewerTasksPanel parentRevPanel = this;
+    public void addListeners() {
+    	 buttonReview.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+            	MakeReviewDialog dlg = new MakeReviewDialog();
+             	dlg.addListeners(parentRevPanel);
+             	dlg.setVisible(true);
+             	System.out.print("make panel");
+             }
+    	 });
     }
 }
