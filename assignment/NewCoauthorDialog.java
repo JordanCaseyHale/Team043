@@ -75,16 +75,21 @@ public class NewCoauthorDialog extends JDialog {
         bp.add(btnAddCoauthor);
         bp.add(btnCancel);
 		
-        this.addListeners();
 		getContentPane().add(panel, BorderLayout.CENTER);
         getContentPane().add(bp, BorderLayout.SOUTH);
         pack();
         setResizable(false);
 	 }
-	public void addListeners() { 
+	public void addListeners(SubmissionPanel parent) { 
 		btnAddCoauthor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
+            	if(textFieldTitle.getText().isEmpty() || textFieldForename.getText().isEmpty() || textFieldSurname.getText().isEmpty() || textFieldEmail.getText().isEmpty() || textFieldPassword.getText().isEmpty()){
+            		JOptionPane.showMessageDialog(parent,"Not all fields were filled out.");
+            	}
+            	else{
+            		parent.addCoauthor(textFieldTitle.getText(),textFieldForename.getText(),textFieldSurname.getText(),textFieldEmail.getText(),PasswordHash.getHashedString(textFieldPassword.getText()));
+            		dispose();
+            	}
             }
         });
 		btnCancel.addActionListener(new ActionListener() {

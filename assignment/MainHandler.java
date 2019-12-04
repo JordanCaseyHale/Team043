@@ -7,7 +7,8 @@ public class MainHandler {
 
 	public static void main(String[] args) 
 	{  
-		MainPanel introPanel = new MainPanel();
+		//MainPanel introPanel = new MainPanel();
+		WriterPanel introPanel = new WriterPanel();
 		JFrame mainFrame = new JFrame();
 		mainFrame.setTitle("JournalManager");
 		mainFrame.setPreferredSize(new Dimension(800, 600));

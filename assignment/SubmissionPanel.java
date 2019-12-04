@@ -2,6 +2,8 @@ package assignment;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -15,42 +17,44 @@ public class SubmissionPanel extends JPanel {
         constraints.anchor = GridBagConstraints.WEST;
         constraints.insets = new Insets(10, 10, 10, 10);
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 0.5;
-        constraints.weighty = 1;
-        
-        
+        constraints.weighty = 1;       
         constraints.weightx = 0.3;
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.gridwidth = 1;
         grid.add(labelTitle, constraints);
-        
-        constraints.weightx = 0.7;
+
         constraints.gridx = 1;
+        constraints.gridwidth = 2;
         grid.add(textFieldTitle,constraints);
-        
-        constraints.weightx = 0.3;
+
         constraints.gridx = 0;
         constraints.gridy = 1;     
+        constraints.gridwidth = 1;
         grid.add(labelPDFLink, constraints);
-        
-        constraints.weightx = 0.7;
+
         constraints.gridx = 1;
+        constraints.gridwidth = 2;
         grid.add(textFieldPDFLink,constraints);  
-        
-        constraints.weightx = 0.3;
+
         constraints.gridx = 0;
         constraints.gridy = 2;     
+        constraints.gridwidth = 1;
         grid.add(labelCoauthorList, constraints);
-        
-        constraints.weightx = 0.7;
+
         constraints.gridx = 1;
+        constraints.gridwidth = 1;
         grid.add(buttonAddCoauthor,constraints);  
+        
+        constraints.gridx = 2;
+        constraints.gridwidth = 1;
+        grid.add(buttonRemoveCoauthor,constraints);  
         
         constraints.weightx = 1;
         constraints.weighty = 0.5;
         constraints.gridx = 0;
         constraints.gridy = 3;
-        constraints.gridwidth = 2;
+        constraints.gridwidth = 3;
         
         
         listCoauthors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -82,11 +86,25 @@ public class SubmissionPanel extends JPanel {
 
 	protected DefaultListModel<String> listModelCoauthors = new DefaultListModel<>();
 	protected JList<String> listCoauthors = new JList<String>(listModelCoauthors);	
+	protected ArrayList<ArrayList<String>> listCoauthorData = new ArrayList<ArrayList<String>>();
+	protected ArrayList<String> mainAuthorData;
+	
 	protected JButton buttonAddCoauthor = new JButton("Add Co-author"); 
+	protected JButton buttonRemoveCoauthor = new JButton("Remove Co-author"); 
 	
 	protected JTextField textFieldTitle = new JTextField(30);
 	protected JTextArea textAreaAbstract = new JTextArea(20,10);
 	protected JTextField textFieldPDFLink = new JTextField(30);
+	
+	public void addCoauthor(String title, String forename, String surname, String email, String pwhash) {
+		listModelCoauthors.addElement(title+". "+forename+" "+surname);
+		ArrayList<String> data = new ArrayList<>(Arrays.asList(title,forename,surname,email,pwhash));
+		listCoauthorData.add(data);
+	}
+	
+	public void setMainAuthor(String title, String forename, String surname, String email, String pwhash) {
+		mainAuthorData = new ArrayList<String>(Arrays.asList(title,forename,surname,email,pwhash));
+	}
 	
 	
     protected JButton buttonMakeSubmission = new JButton("Make Submission"); 
@@ -107,10 +125,22 @@ public class SubmissionPanel extends JPanel {
             	
             }
         });
+        SubmissionPanel parentSubPanel = this;
         buttonAddCoauthor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	NewCoauthorDialog dlg = new NewCoauthorDialog(listModelCoauthors);
+            	dlg.addListeners(parentSubPanel);
             	dlg.setVisible(true);
+            	
+            }
+        });
+        buttonRemoveCoauthor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	int i = listCoauthors.getSelectedIndex();
+            	if(i > -1 && i<listCoauthors.getModel().getSize()) {
+            		listModelCoauthors.remove(i);
+            		listCoauthors.remove(i);
+            	}
             }
         });
     }
