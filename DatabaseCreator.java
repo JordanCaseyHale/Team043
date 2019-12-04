@@ -47,6 +47,7 @@ public class DatabaseCreator {
 			stmt.executeUpdate("DELETE FROM account");
 			*/
 			System.out.println(PasswordHash.getHashedString("password"));
+			/*
 			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestEditor@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s', 'Editor')",PasswordHash.getHashedString("password")));
 			stmt.executeUpdate("INSERT INTO journal VALUES ('2019-0001', 'Test2 Journal', 'TestEditor@aol.com')");
 			stmt.executeUpdate("INSERT INTO	journalEditors VALUES ('TestEditor@aol.com', '2019-0001')");
@@ -55,7 +56,10 @@ public class DatabaseCreator {
 			stmt.executeUpdate("INSERT INTO article VALUES (111, '2019-0001', 1, 11, '001-003', 'Test Article', 'Abstract paragraph', 'link')");
 			stmt.executeUpdate("INSERT INTO author VALUES (321, 'Mr', 'Test', 'Testy', 'TestAuthor@aol.com')");
 			stmt.executeUpdate("INSERT INTO articleAuthors VALUES (321, 111)");
-			
+			*/
+			//stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestAuthor@aol.com', 'Dr', 'John', 'Smith', 'University of Sheffield', '%s', 'Author')",PasswordHash.getHashedString("password")));
+			stmt.executeUpdate("INSERT INTO submission VALUES (123, 'Title test', 'Abstract test', 'pdf link', '2019-0001', 'TestAuthor@aol.com')");
+			stmt.executeUpdate("INSERT INTO submissionAuthors VALUES ('TestAuthor@aol.com', 123)");
 			System.out.println("end");
 		} catch (SQLException ex) {ex.printStackTrace();}
 	}

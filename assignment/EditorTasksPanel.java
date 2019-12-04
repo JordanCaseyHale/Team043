@@ -140,9 +140,10 @@ public class EditorTasksPanel extends JPanel {
 				if (!submissionList.isSelectionEmpty()) {
 					int index = submissionList.getSelectedIndex();
 					Submission sub = subs.get(index);
-					labelArticleName.setText(sub.getName());
-					labelISSN.setText(sub.getJournal());
-					labelPDFLink.setText(sub.getPdfLink());
+					labelArticleName.setText("Article: "+sub.getName());
+					labelISSN.setText("ISSN: "+sub.getJournal());
+					//Get Verdicts
+					
 				}
 				//uses the info to decide status
 				//disable certain buttons
