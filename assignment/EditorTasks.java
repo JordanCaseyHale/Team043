@@ -28,6 +28,23 @@ public class EditorTasks {
 		return subs;
 	}
 	
+	public static List<String> getVerdicts(int subID) {
+		List<String> verdicts = new ArrayList<String>();
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM reviews WHERE SubID = ?");
+			pstmt.setInt(1, subID);
+			ResultSet results = pstmt.executeQuery();
+			String verdict;
+			while (results.next()) {
+				verdict = results.getString(8);
+				if (verdict != null) {
+					verdicts.add(verdict);
+				}
+			}
+		} catch (SQLException ex) {ex.printStackTrace();}
+		return verdicts;
+	}
+	
 	public static void appointEditor() {
 		
 	}
