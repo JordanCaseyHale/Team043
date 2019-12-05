@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Main {
@@ -55,8 +56,13 @@ public class Main {
 				}
 			}
 			if (accountExists) {
+				System.out.println("account exists");
 				pstmt = con.prepareStatement("SELECT password FROM account WHERE Email = ?");
-				pass = pstmt.executeQuery().getString(1);
+				pstmt.setString(1, email);
+				ResultSet rs = pstmt.executeQuery();
+				if (rs.first()) {
+					pass = rs.getString(1);
+				}
 			}
 			if(pass.equals(password)) {
 				//take to correct page
