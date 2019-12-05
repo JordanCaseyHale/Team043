@@ -24,6 +24,7 @@ public class AuthorTasksPanel extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout());
         
         JPanel topButtons = new JPanel(new FlowLayout());
+        labelTopMessage.setText("Welcome, "+email);
         topButtons.add(labelTopMessage);
         topButtons.add(buttonLogout);
         topButtons.add(buttonResetPassword);
@@ -103,7 +104,7 @@ public class AuthorTasksPanel extends JPanel {
         
         mainPanel.add(journalListScrollPane,BorderLayout.EAST);
         
-        //////// only show when having reviewer privileges
+        //only show when having reviewer privileges
         ReviewerTasksPanel rp = new ReviewerTasksPanel();
         rp.addListeners();
         tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");        
@@ -141,7 +142,7 @@ public class AuthorTasksPanel extends JPanel {
 					Submission selected = submissions.get(journalList.getSelectedIndex());
 
 					labelArticleName.setText("Article: " + selected.getName());
-					labelISSN.setText("ISSN: " + selected.getJournalISSN());
+					labelISSN.setText("ISSN: " + selected.getJournal());
 					textPanePDFLink.setText(selected.getPdfLink());
 					int reviewsDone = selected.getReviews().length;
 					labelReviewCount.setText("Reviews on Article: " + reviewsDone);

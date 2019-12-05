@@ -34,27 +34,30 @@ public class Main {
 		
 		//Possibly make account object
 		String pass = "";
+		Boolean accountExists = false;
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("SELECT password FROM account WHERE Email = ? AND userType = ?");
+			PreparedStatement pstmt = null;
 			ResultSet result = null;
-			pstmt.setString(1, email);
 			if(userType == "Editor") {
-				pstmt.setString(2, userType);
+				pstmt = con.prepareStatement("SELECT journalEditors.ISSN from journalEditors INNER JOIN account ON account.Email = journalEditors.Email WHERE account.Email = ?");
+				pstmt.setString(1, email);
 				result = pstmt.executeQuery();
 				if (result.first()) {
-					pass = result.getString(1);
-					System.out.println(pass);
+					accountExists = true;
 				}
 			}
 			else if(userType == "Author") {
-				pstmt.setString(2, userType);
+				pstmt = con.prepareStatement("SELECT submissionAuthors.SubID from submissionAuthors INNER JOIN account ON account.Email = submissionAuthors.Email WHERE account.Email = ?");
+				pstmt.setString(1, email);
 				result = pstmt.executeQuery();
 				if (result.first()) {
-					pass = result.getString(1);
-					System.out.println(pass);
+					accountExists = true;
 				}
 			}
-
+			if (accountExists) {
+				pstmt = con.prepareStatement("SELECT password FROM account WHERE Email = ?");
+				pass = pstmt.executeQuery().getString(1);
+			}
 			if(pass.equals(password)) {
 				//take to correct page
 				System.out.println("Should succ");
