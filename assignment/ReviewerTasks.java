@@ -12,13 +12,12 @@ public class ReviewerTasks {
 		
 		boolean show = false;
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			String str = String.format("SELECT RemainingReviews FROM reviewers WHERE RevId = %d", "VARIABLE");
-			ResultSet result = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT RemainingReviews FROM reviewers WHERE RevId = ?");
+			ResultSet result = pstmt.executeQuery();
 			int left = result.getInt(1);
 			
-			str = String.format("SELECT COUNT FROM reviews WHERE RevID = %d", "VARIABLE");
-			result = stmt.executeQuery(str);
+			pstmt = con.prepareStatement("SELECT COUNT FROM reviews WHERE RevID = ?");
+			result = pstmt.executeQuery();
 			int inProgress = result.getInt(1); 
 			if(left != inProgress) {
 				show = true;
@@ -33,12 +32,13 @@ public class ReviewerTasks {
 			//Get info of author
 			//Get list of submissions where there are no conflicts
 			try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-				Statement stmt = con.createStatement();
-				String str = String.format("SELECT Affiliation FROM account WHERE submissionAuthor.Email = %s AND account.Email = submissionAuthor.Email", author);
-				ResultSet results = stmt.executeQuery(str);
+				PreparedStatement pstmt = con.prepareStatement("SELECT Affiliation FROM account WHERE submissionAuthor.Email = ? AND account.Email = submissionAuthor.Email");
+				ResultSet results = pstmt.executeQuery();
 				String affil = results.getString(1);
-				str = String.format("SELECT ?? FROM submission WHERE account.Affiliation != %s AND subbmisionAuthors.Email = account.Email",affil);
-				results = stmt.executeQuery(str);
+				//the ?? means idk what data to return and display
+				pstmt = con.prepareStatement("SELECT ?? FROM submission WHERE account.Affiliation != ? AND subbmisionAuthors.Email = account.Email");
+				pstmt.setString(1, affil);
+				results = pstmt.executeQuery();
 				while(results.next()) {
 					//output list
 				}
@@ -54,21 +54,19 @@ public class ReviewerTasks {
 	 * Submits a review
 	 */
 	public static void submitReview() {
-		String str = String.format("UPDATE reviews SET InitialReview = %s, InitialVerdict =  %s WHERE RevID = %d AND SubID = %s", "VARIABLES");
-		boolean result = MySQLConnection.doUpdate(str);
-		if(result) {
-			//output success
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET InitialReview = ?, InitialVerdict =  ? WHERE RevID = ? AND SubID = ?");
+			pstmt.executeUpdate();
 		}
-		else {
-			//output error
+		catch (SQLException ex){
+			ex.printStackTrace();
 		}
 	}
 	
 	public static void getResponses() {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			String str = String.format("SELECT Response FROM reviews WHERE RevID = %d SubID = %d", "VARIABLES");
-			ResultSet result = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT Response FROM reviews WHERE RevID = ? SubID = ?");
+			ResultSet result = pstmt.executeQuery();
 			while(result.next()) {
 				//output reponses
 			}
@@ -82,32 +80,29 @@ public class ReviewerTasks {
 	public static void submitFinalVerdict() {
 		//SQL submitting final verdict
 		//If last review then removeReviewer
-		String str = String.format("UPDATE reviews SET FinalVerdict = %s WHERE RevID = %d AND SubID = %s", "VARIABLES");
-		boolean result = MySQLConnection.doUpdate(str);
-		if(result) {
-			//output success
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET FinalVerdict = ? WHERE RevID = ? AND SubID =  ?");
+			pstmt.executeUpdate();
 			checkLast();
-			
 		}
-		else {
-			//output error
+		catch (SQLException ex){
+			ex.printStackTrace();
 		}
 	}
 	
 	public static void checkLast() {
 		
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			String str = String.format("SELECT RemainingReviews FROM reviewers WHERE RevID = ", "VARIABLE");
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT RemainingReviews FROM reviewers WHERE RevID = ?");
+			ResultSet results = pstmt.executeQuery();
 			int left = results.getInt(1);
 			if(left == 1) {
 				removeReviewer();
 			}
 			else {
 				left -= 1;
-				str = String.format("UPDATE reviewers SET RemainingReviews = %d WHERE RevID = %d", left "VARIABLE");
-				MySQLConnection.doUpdate(str);
+				PreparedStatement psmt = con.prepareStatement("UPDATE reviewers SET RemainingReviews = ? WHERE RevID = ?");
+				psmt.executeUpdate();
 			}
 		}
 		catch (SQLException ex){
@@ -118,8 +113,14 @@ public class ReviewerTasks {
 	}
 	
 	public static void removeReviewer() {
-		String str = String.format("DELETE FROM reviewers WHERE RevID = %d", "VARIABLE");
-		MySQLConnection.doUpdate(str);
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("DELETE FROM reviewers WHERE RevID = ?");
+			pstmt.executeUpdate();
+			checkLast();
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
 		//Return to home page with messsage saying no more reviews left
 	}
 }
