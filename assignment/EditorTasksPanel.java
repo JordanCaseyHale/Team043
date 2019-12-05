@@ -1,5 +1,6 @@
 package assignment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.awt.BorderLayout;
@@ -130,11 +131,12 @@ public class EditorTasksPanel extends JPanel {
     	submissionList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				//enable buttons
+				List<String> verdicts = new ArrayList<String>();
 				if (!buttonReject.isEnabled()) {
-					buttonReject.enable();
+					buttonReject.setEnabled(true);
 				}
 				if (!buttonAddToJournal.isEnabled()) {
-					buttonAddToJournal.enable();
+					buttonAddToJournal.setEnabled(true);
 				}
 				//gets info to display
 				if (!submissionList.isSelectionEmpty()) {
@@ -143,8 +145,19 @@ public class EditorTasksPanel extends JPanel {
 					labelArticleName.setText("Article: "+sub.getName());
 					labelISSN.setText("ISSN: "+sub.getJournal());
 					//Get Verdicts
-					
+					verdicts = EditorTasks.getVerdicts(sub.getSubID());
 				}
+				int size = verdicts.size();
+				if (size>0) {
+					labelFinalVerdict1.setText("Verdict 1: "+verdicts.get(0));
+				}
+				if (size>1) {
+					labelFinalVerdict2.setText("Verdict 2: "+verdicts.get(1));
+				}
+				if (size>2) {
+					labelFinalVerdict3.setText("Verdict 3: "+verdicts.get(2));
+				}
+				
 				//uses the info to decide status
 				//disable certain buttons
 			}
