@@ -146,19 +146,58 @@ public class AuthorTasksPanel extends JPanel {
 					labelArticleName.setText("Article: " + selected.getName());
 					labelISSN.setText("ISSN: " + selected.getJournal());
 					textPanePDFLink.setText(selected.getPdfLink());
-					int reviewsDone = selected.getReviews().length;
-					labelReviewCount.setText("Reviews on Article: " + reviewsDone);
+					int[] reviewsDone = selected.getReviews();
+					String[] initVers = selected.getInitVerdicts();
+					String[] vers = selected.getVerdicts();
+					String[] responses = selected.getResponses();
+					int reviewCounter = 0;
+					int initVersCounter = 0;
+					int responsesCounter = 0;
+					int versCounter = 0;
+					for(int i = 0;i<3;i++) {
+						String label = "";
+						if(reviewsDone[i] != 0) {
+							reviewCounter++;
+						}
+						if(responses[i] != null) {
+							reviewCounter++;
+						}
+						if(initVers[i] != null) {
+							initVersCounter++;
+							label = initVers[i];
+						}
+						if(vers[i] != null) {
+							versCounter++;
+							label = vers[i];
+						}
+						switch(i) {
+							case 0:
+								labelVerdict1.setText("Verdict 1 " + label);
+								break;
+							case 1:
+								labelVerdict2.setText("Verdict 2 " + label);
+								break;
+							case 2:
+								labelVerdict3.setText("Verdict 3 " + label);
+								break;
+							default:
+								break;
+						}
+
+					}
+					
+					labelReviewCount.setText("Reviews on Article: " + reviewCounter);
 					String statusString;
-					if (reviewsDone <= 0) {
+					if (reviewCounter <= 0) {
 						statusString = "Submitted";
 					}
-					else if(selected.getInitVerdicts().length != 3){
+					else if(initVersCounter < 3){
 						statusString = "Reviews Recieved";
 					}
-					else if(selected.getResponses().length != 3) {
+					else if(responsesCounter < 3) {
 						statusString = "Initial Verdict";
 					}
-					else if(selected.getVerdicts().length != 3) {
+					else if(versCounter < 3) {
 						statusString = "Responses Recieved";
 					}
 					else if(!selected.getComplete()) {

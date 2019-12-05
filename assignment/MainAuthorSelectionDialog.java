@@ -20,10 +20,9 @@ public class MainAuthorSelectionDialog extends JDialog {
 	protected ButtonGroup radioButtons = new ButtonGroup();
 	
 	protected ArrayList<JSpinner> reviewCounters = new ArrayList<JSpinner>();
-	public MainAuthorSelectionDialog(Submission sub, Author submittedAuthor) {
+	public MainAuthorSelectionDialog(List<Author> as) {
 		this.setTitle("Select Authors");
-		authors.add(submittedAuthor);
-		authors.addAll(sub.getCoAuthors());
+		this.authors = as;
 		JPanel pane = new JPanel(new GridBagLayout());
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension (500,400));
@@ -44,6 +43,7 @@ public class MainAuthorSelectionDialog extends JDialog {
 			constraints.gridx = 0;
 			constraints.gridy = i+1;
 			JRadioButton rb = new JRadioButton(auth.getTitle()+". "+auth.getForename()+" "+auth.getSurname());
+			rb.setActionCommand(auth.getEmail());
 			radioButtons.add(rb);
 			pane.add(rb,constraints);
 			constraints.gridx = 1;	
@@ -70,7 +70,7 @@ public class MainAuthorSelectionDialog extends JDialog {
 	public void addListeners(JPanel parent) { 
 		btnMakeSubmission.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+            	System.out.println(radioButtons.getSelection().getActionCommand());
             }
         });
 		

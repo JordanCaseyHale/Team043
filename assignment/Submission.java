@@ -11,6 +11,7 @@ public class Submission {
 	 * Gets a Submission object based on a subID
 	 */
 	public static Submission getSubmissionByID(int subID) {
+		Submission returnedSub = new Submission();
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 
 			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM submission WHERE SubID = ?");
@@ -30,13 +31,36 @@ public class Submission {
 				Author a = new Author(subAuthResult.getString(2),subAuthResult.getString(3),subAuthResult.getString(4),subAuthResult.getString(1),subAuthResult.getString(5),subAuthResult.getString(6));
 				coauths.add(a);
 			}
+			
+			PreparedStatement revIDpstmt = con.prepareStatement("SELECT RevID,Initial_verdict,Verdict FROM reviews WHERE SubID = ?");
+			revIDpstmt.setInt(1, subID);
+			int[] revIDs = new int[3];
+			String[] initVers  = new String[3];
+			String[] vers = new String[3];
+			int count = 0;
+			ResultSet revIDresult = revIDpstmt.executeQuery();
+			while (revIDresult.next()){
+				if(count<3) {
+					revIDs[count] = revIDresult.getInt(1);
+					initVers[count] = revIDresult.getString(2);
+					vers[count] = revIDresult.getString(3);
+					count++;
+				}
+			}			
+
 			PreparedStatement getRespondAuthorstmt = con.prepareStatement("SELECT Title,Forename,Surname FROM account WHERE Email = ?");
 			getRespondAuthorstmt.setString(1,respondEmail);
 			ResultSet authResult = getRespondAuthorstmt.executeQuery();
+			
 			if (authResult.first()) {
-				return new Submission(result.getString(2),result.getString(3),result.getString(4),authResult.getString(1),authResult.getString(2)
+				returnedSub = new Submission(result.getString(2),result.getString(3),result.getString(4),authResult.getString(1),authResult.getString(2)
 					,authResult.getString(3),respondEmail,coauths,result.getString(5),subID);
+				returnedSub.setReviews(revIDs);
+				returnedSub.setInitVerdicts(initVers);
+				returnedSub.setVerdicts(vers);
+				return returnedSub;
 			}
+			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -63,7 +87,10 @@ public class Submission {
 	
 	//Default Constructor
 	public Submission() {
-		
+		this.reviewIDs = new int[3];
+		this.initVerdicts = new String[3];
+		this.verdicts = new String[3];
+		this.responses = new String[3];		
 	}
 	
 	//Constructor
@@ -98,10 +125,10 @@ public class Submission {
 		this.respondEmail = respondEmail;
 		this.coAuthors = coAuthors;
 		this.journal = ISSN;
-		this.reviewIDs = new int[0];
-		this.initVerdicts = new String[0];
-		this.verdicts = new String[0];
-		this.responses = new String[0];
+		this.reviewIDs = new int[3];
+		this.initVerdicts = new String[3];
+		this.verdicts = new String[3];
+		this.responses = new String[3];
 		this.subID = subID;
 		this.complete = false;
 	}

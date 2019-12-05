@@ -3,7 +3,6 @@ package assignment;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.*;
@@ -112,7 +111,6 @@ public class SubmissionPanel extends JPanel {
 	protected DefaultListModel<String> listModelCoauthors = new DefaultListModel<>();
 	protected JList<String> listCoauthors = new JList<String>(listModelCoauthors);	
 	protected ArrayList<Author> listCoauthorData = new ArrayList<Author>();
-	protected ArrayList<String> mainAuthorData;
 	protected JComboBox<String> comboBoxJournals = new JComboBox<String>();
     protected DefaultComboBoxModel<String> journalComboBoxModel = new DefaultComboBoxModel<String>();	
 	
@@ -123,6 +121,8 @@ public class SubmissionPanel extends JPanel {
 	
 	protected JButton buttonAddCoauthor = new JButton("Add Co-author"); 
 	protected JButton buttonRemoveCoauthor = new JButton("Remove Co-author"); 
+	
+	protected Submission sub = new Submission();
 	
 	protected JTextField textFieldTitle = new JTextField(30);
 	protected JTextArea textAreaAbstract = new JTextArea(20,10);
@@ -162,7 +162,6 @@ public class SubmissionPanel extends JPanel {
         buttonMakeSubmission.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	//pass info to submission object
-            	Submission sub = new Submission();
             	sub.setName(textFieldTitle.getText().trim());
             	sub.setPdfLink(textFieldPDFLink.getText().trim());
             	sub.setAbstractPara(textAreaAbstract.getText().trim());
@@ -172,7 +171,10 @@ public class SubmissionPanel extends JPanel {
             	sub.setRespondSurname(respondSurname);
             	sub.setRespondEmail(respondEmail);
             	sub.setJournal(((String) comboBoxJournals.getSelectedItem()).split("ISSN:")[1].trim());
-            	MainAuthorSelectionDialog dlg = new MainAuthorSelectionDialog(sub,author);
+            	ArrayList<Author> allAuthors = new ArrayList<Author>();
+            	allAuthors.addAll(listCoauthorData);
+            	allAuthors.add(author);
+            	MainAuthorSelectionDialog dlg = new MainAuthorSelectionDialog(allAuthors);
             	dlg.addListeners(parentSubPanel);
             	dlg.setVisible(true);
             }
