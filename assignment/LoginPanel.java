@@ -99,7 +99,7 @@ public class LoginPanel extends JPanel {
             		if (userType == "Author") {
             			System.out.println("succ");
                 		parent.getContentPane().removeAll();
-                		AuthorTasksPanel nextPanel = new AuthorTasksPanel();
+                		AuthorTasksPanel nextPanel = new AuthorTasksPanel(email);
                 		nextPanel.addListeners(parent);
                 		parent.getContentPane().add(nextPanel);
                 		parent.revalidate(); 

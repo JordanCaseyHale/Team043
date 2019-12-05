@@ -1,11 +1,53 @@
 package assignment;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Submission {
+	/**
+	 * Gets a Submission object based on a subID
+	 */
+	public static Submission getSubmissionByID(int subID) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 
+			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM submission WHERE SubID = ?");
+			pstmt.setInt(1, subID);
+			ResultSet result = pstmt.executeQuery();
+			String respondEmail = null;
+			if (result.first()) {
+				respondEmail = result.getString(6);
+			}				
+			PreparedStatement getSubAuthstmt = con.prepareStatement("SELECT submissionAuthors.Email,account.Title,account.Forename,account.Surname,account.Affiliation,account.Password FROM account"
+					+ " INNER JOIN submissionAuthors ON submissionAuthors.Email = account.Email WHERE submissionAuthors.SubID = ?");
+			getSubAuthstmt.setInt(1,subID);
+			ResultSet subAuthResult = getSubAuthstmt.executeQuery();
+			
+			ArrayList<Author> coauths = new ArrayList<Author>();
+			while (subAuthResult.next()){
+				Author a = new Author(subAuthResult.getString(2),subAuthResult.getString(3),subAuthResult.getString(4),subAuthResult.getString(1),subAuthResult.getString(5),subAuthResult.getString(6));
+				coauths.add(a);
+			}
+			PreparedStatement getRespondAuthorstmt = con.prepareStatement("SELECT Title,Forename,Surname FROM account WHERE Email = ?");
+			getRespondAuthorstmt.setString(1,respondEmail);
+			ResultSet authResult = getRespondAuthorstmt.executeQuery();
+			if (authResult.first()) {
+				return new Submission(result.getString(2),result.getString(3),result.getString(4),authResult.getString(1),authResult.getString(2)
+					,authResult.getString(3),respondEmail,coauths,result.getString(5),subID);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	//Instances Variables
-	private String[] reviews;
+	private int[] reviewIDs;
 	private String[] verdicts;
+	private String[] initVerdicts;
 	private String[] responses;
 	private int subID;
 	private String journal;
@@ -17,6 +59,7 @@ public class Submission {
 	private String respondSurname;
 	private String respondEmail;
 	private List<Author> coAuthors;
+	private Boolean complete;
 	
 	//Default Constructor
 	public Submission() {
@@ -25,7 +68,7 @@ public class Submission {
 	
 	//Constructor
 	public Submission(String name, String abstractPara, String pdfLink, String respondTitle, String respondForename, String respondSurname, String respondEmail,
-			List<Author> coAuthors, String[] reviews, String[] verdicts, String[] responses, String journal, int subID) {
+			List<Author> coAuthors, int[] reviewIDs, String[] initverdicts, String[] verdicts,String[] responses, String ISSN, int subID, Boolean complete) {
 		this.setName(name);
 		this.abstractPara = abstractPara;
 		this.pdfLink = pdfLink;
@@ -34,18 +77,39 @@ public class Submission {
 		this.respondSurname = respondSurname;
 		this.respondEmail = respondEmail;
 		this.coAuthors = coAuthors;
-		this.reviews = reviews;
+		this.reviewIDs = reviewIDs;
+		this.initVerdicts = initverdicts;
 		this.verdicts = verdicts;
 		this.responses = responses;
-		this.journal = journal;
+		this.journal = ISSN;
 		this.subID = subID;
+		this.complete = complete;
+	}
+	//Partial Constructor 
+	
+	public Submission(String name, String abstractPara, String pdfLink, String respondTitle, String respondForename, String respondSurname, String respondEmail,
+			List<Author> coAuthors, String ISSN,int subID) {
+		this.setName(name);
+		this.abstractPara = abstractPara;
+		this.pdfLink = pdfLink;
+		this.respondTitle = respondTitle;
+		this.respondForename = respondForename;
+		this.respondSurname = respondSurname;
+		this.respondEmail = respondEmail;
+		this.coAuthors = coAuthors;
+		this.journal = ISSN;
+		this.reviewIDs = new int[0];
+		this.initVerdicts = new String[0];
+		this.verdicts = new String[0];
+		this.responses = new String[0];
+		this.subID = subID;
+		this.complete = false;
 	}
 	
 	
-	
 	//Get Methods
-	public String[] getReviews() {
-		return this.reviews;
+	public int[] getReviews() {
+		return this.reviewIDs;
 	}
 	
 	public String[] getVerdicts() {
@@ -95,11 +159,18 @@ public class Submission {
 	public int getSubID() {
 		return subID;
 	}
+	public String[] getInitVerdicts() {
+		return initVerdicts;
+	}
 
+	public Boolean getComplete() {
+		return complete;
+	}
+	
 	//Set Methods
 	
-	public void setReviews(String[] reviews) {
-		this.reviews = reviews;
+	public void setReviews(int[] reviews) {
+		this.reviewIDs = reviews;
 	}
 	public void setCoAuthors(List<Author> coAuthors) {
 		this.coAuthors = coAuthors;
@@ -113,8 +184,8 @@ public class Submission {
 		this.responses = responses;
 	}
 	
-	public void setJournal(String journal) {
-		this.journal = journal;
+	public void setJournal(String ISSN) {
+		this.journal = ISSN;
 	}
 
 	public void setName(String name) {
@@ -148,4 +219,14 @@ public class Submission {
 	public void setSubID(int subID) {
 		this.subID = subID;
 	}
+
+	public void setInitVerdicts(String[] initVerdicts) {
+		this.initVerdicts = initVerdicts;
+	}
+
+	public void setComplete(Boolean complete) {
+		this.complete = complete;
+	}
+	
+	
 }
