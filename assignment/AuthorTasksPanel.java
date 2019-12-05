@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class AuthorTasksPanel extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout());
         
         JPanel topButtons = new JPanel(new FlowLayout());
+        labelTopMessage.setText("Welcome, "+email);
         topButtons.add(labelTopMessage);
         topButtons.add(buttonLogout);
         topButtons.add(buttonResetPassword);
@@ -103,7 +106,7 @@ public class AuthorTasksPanel extends JPanel {
         
         mainPanel.add(journalListScrollPane,BorderLayout.EAST);
         
-        //////// only show when having reviewer privileges
+        //only show when having reviewer privileges
         ReviewerTasksPanel rp = new ReviewerTasksPanel();
         rp.addListeners();
         tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");        
@@ -168,5 +171,15 @@ public class AuthorTasksPanel extends JPanel {
 				}
 			}
 		});
+    	buttonLogout.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			parent.getContentPane().removeAll();
+        		MainPanel nextPanel = new MainPanel();
+        		nextPanel.addListeners(parent);
+        		parent.getContentPane().add(nextPanel);
+        		parent.revalidate(); 
+        		parent.repaint();
+    		}
+    	});
     }
 }
