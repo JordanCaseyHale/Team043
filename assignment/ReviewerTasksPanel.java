@@ -1,6 +1,7 @@
 package assignment;
 
 import java.awt.BorderLayout;
+import java.util.*;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -102,6 +103,9 @@ public class ReviewerTasksPanel extends JPanel {
     protected JList<String> journalList;
     protected JList<String> selectedJournalList;
     ReviewerTasksPanel parentRevPanel = this;
+    
+    protected ArrayList<Submission> submissions = new ArrayList<Submission>();
+    
     public void addListeners() {
     	 buttonReview.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
@@ -111,5 +115,12 @@ public class ReviewerTasksPanel extends JPanel {
              	System.out.print("make panel");
              }
     	 });
+    	 
+    	 buttonResetPassword.addActionListener(new ActionListener() {
+    		 public void actionPerformed(ActionEvent e) {
+    			 
+    		 }
+    	 });
     }
+
 }

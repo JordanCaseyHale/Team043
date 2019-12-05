@@ -20,8 +20,6 @@ public class AuthorTasks {
 		} catch (SQLException e) {e.printStackTrace();}
 		*/
 		boolean result = false;
-		String str = String.format("INSERT INTO submission VALUES (%s,%s,%s,%s)",title,abstractPara,mainAuthor,link);
-		result = MySQLConnection.doUpdate(str);
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("INSERT INTO submission VALUES (?, ?, ?, ?)");
 			pstmt.setString(1, title);
@@ -39,8 +37,6 @@ public class AuthorTasks {
 	
 	public static boolean createAccount(String email, String title, String forename, String surname, String affiliation, String password, String userType) {
 		boolean result = false;
-		String str = String.format("INSERT INTO account VALUES (%s,%s,%s,%s,%s,%s,%s)",email,title,forename,surname,affiliation,password,userType);
-		result = MySQLConnection.doUpdate(str);
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("INSERT INTO account VALUES (?, ?, ?, ?, ?, ?");
 			pstmt.setString(1, email);
