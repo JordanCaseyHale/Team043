@@ -15,9 +15,6 @@ public class EditorTasks {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM submission");
 			ResultSet results = pstmt.executeQuery();
-			pstmt = con.prepareStatement("SELECT * FROM account WHERE Email = ? AND UserType = 'Author'");
-			ResultSet mainResults;
-			String mainAuthorEmail;
 			while (results.next()) {
 				Submission tmp = new Submission();
 				tmp.setSubID(results.getInt(1));
