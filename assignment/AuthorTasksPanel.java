@@ -141,7 +141,7 @@ public class AuthorTasksPanel extends JPanel {
 					Submission selected = submissions.get(journalList.getSelectedIndex());
 
 					labelArticleName.setText("Article: " + selected.getName());
-					labelISSN.setText("ISSN: " + selected.getJournalISSN());
+					labelISSN.setText("ISSN: " + selected.getJournal());
 					textPanePDFLink.setText(selected.getPdfLink());
 					int reviewsDone = selected.getReviews().length;
 					labelReviewCount.setText("Reviews on Article: " + reviewsDone);

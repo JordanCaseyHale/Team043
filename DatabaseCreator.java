@@ -7,7 +7,7 @@ public class DatabaseCreator {
 	public static void main(String [] args) {
 		//dbDrop();
 		//dbCreation();
-		//dbSetUp();
+		dbSetUp();
 		/*
 		try (Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043?user=team043&password=38796815")){
 			Statement stmt = con.createStatement();
@@ -48,7 +48,7 @@ public class DatabaseCreator {
 			*/
 			System.out.println(PasswordHash.getHashedString("password"));
 			/*
-			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestEditor@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s', 'Editor')",PasswordHash.getHashedString("password")));
+			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestEditor@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s')",PasswordHash.getHashedString("password")));
 			stmt.executeUpdate("INSERT INTO journal VALUES ('2019-0001', 'Test2 Journal', 'TestEditor@aol.com')");
 			stmt.executeUpdate("INSERT INTO	journalEditors VALUES ('TestEditor@aol.com', '2019-0001')");
 			stmt.executeUpdate("INSERT INTO volume VALUES ('2019-0001', 1, 2019)");
@@ -56,10 +56,17 @@ public class DatabaseCreator {
 			stmt.executeUpdate("INSERT INTO article VALUES (111, '2019-0001', 1, 11, '001-003', 'Test Article', 'Abstract paragraph', 'link')");
 			stmt.executeUpdate("INSERT INTO author VALUES (321, 'Mr', 'Test', 'Testy', 'TestAuthor@aol.com')");
 			stmt.executeUpdate("INSERT INTO articleAuthors VALUES (321, 111)");
-			*/
-			//stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestAuthor@aol.com', 'Dr', 'John', 'Smith', 'University of Sheffield', '%s', 'Author')",PasswordHash.getHashedString("password")));
+			
+			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestAuthor@aol.com', 'Dr', 'John', 'Smith', 'University of Sheffield', '%s')",PasswordHash.getHashedString("password")));
 			stmt.executeUpdate("INSERT INTO submission VALUES (123, 'Title test', 'Abstract test', 'pdf link', '2019-0001', 'TestAuthor@aol.com')");
 			stmt.executeUpdate("INSERT INTO submissionAuthors VALUES ('TestAuthor@aol.com', 123)");
+			*/
+			//stmt.executeUpdate("INSERT INTO reviewers VALUES (42, 'TestAuthor@aol.com', 2)");
+			/*ResultSet results = stmt.executeQuery("SELECT column_name FROM information_schema.COLUMNS WHERE table_name LIKE 'reviews'");
+			while (results.next()) {
+				System.out.println(results.getString(1));
+			}*/
+			//stmt.executeUpdate("INSERT INTO reviews VALUES (123, 42, 'Strong Accept', 'summary text here', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
 			System.out.println("end");
 		} catch (SQLException ex) {ex.printStackTrace();}
 	}
@@ -74,8 +81,7 @@ public class DatabaseCreator {
 					"	Forename varchar(255),\r\n" + 
 					"	Surname varchar(255),\r\n" + 
 					"	Affiliation varchar(255),\r\n" + 
-					"	Password varchar(255) NOT NULL,\r\n" +
-					"   UserType varchar(255) NOT NULL);";
+					"	Password varchar(255) NOT NULL);";
 			//stmt.executeUpdate(str);
 			str = "CREATE TABLE journal (\r\n" + 
 					"	ISSN varchar(255) NOT NULL PRIMARY KEY,\r\n" + 
@@ -124,7 +130,9 @@ public class DatabaseCreator {
 					"	SubID int NOT NULL,\r\n" + 
 					"	RevID int NOT NULL,\r\n" + 
 					"	Initial_verdict varchar(255),\r\n" + 
-					"	Initial_review varchar(255),\r\n" + 
+					"	Summary varchar(255),\r\n" + 
+					"	Typos varchar(255),\r\n" +
+					"	Criticisms varchar(255),\r\n" +
 					"	Response varchar(255),\r\n" + 
 					"	Verdict varchar(255),\r\n" + 
 					"	PRIMARY KEY (SubID, RevID),\r\n" + 
