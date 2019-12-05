@@ -7,8 +7,9 @@ public class AuthorTasks {
 	
 	/**
 	 * Submits an article for consideration
+	 * returns submission ID
 	 */
-	public static boolean submission(String title, String abstractPara, String mainAuthor, String link) {
+	public static int submissionToDB(Submission s) {
 		//??? need all parts of submission as parameters ???
 		
 		//SQL statement adding the article to the database
@@ -20,12 +21,36 @@ public class AuthorTasks {
 		} catch (SQLException e) {e.printStackTrace();}
 		*/
 		boolean result = false;
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("INSERT INTO submission VALUES (?, ?, ?, ?)");
-			pstmt.setString(1, title);
-			pstmt.setString(2, abstractPara);
-			pstmt.setString(3, mainAuthor);
-			pstmt.setString(4, link);
+		int generatedSubID = 0;
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO submission (Title,Abstract,Link,ISSN,MainAuthor) VALUES (?, ?, ?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, s.getName());
+			pstmt.setString(2, s.getAbstractPara());
+			pstmt.setString(3, s.getPdfLink());
+			pstmt.setString(4, s.getJournal());
+			pstmt.setString(5, s.getRespondEmail());
+			pstmt.executeUpdate();
+			ResultSet genIDResult = pstmt.getGeneratedKeys();
+			if (genIDResult.first()) {
+				generatedSubID = genIDResult.getInt(1);
+			}
+			
+			result = true;
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+		return generatedSubID;
+	}
+	/**
+	 * updates submissionAuthor with given author email and submission ID
+	 */
+	public static boolean addSubAuthor(String authorEmail,int SubID) {
+		boolean result = false;
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO submissionAuthors VALUES (?, ?)");
+			pstmt.setString(1, authorEmail);
+			pstmt.setInt(2, SubID);
 			pstmt.executeUpdate();
 			result = true;
 		}
@@ -35,16 +60,42 @@ public class AuthorTasks {
 		return result;
 	}
 	
-	public static boolean createAccount(String email, String title, String forename, String surname, String affiliation, String password, String userType) {
+	/**
+	 * Adds given email and reviews allocated to reviewers table
+	 */
+	public static boolean addReviewerPrivileges(String authorEmail,int reviews) {
 		boolean result = false;
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("INSERT INTO account VALUES (?, ?, ?, ?, ?, ?");
+		if (reviews <=0) {
+			return false;
+		}
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO reviewers (Email,RemainingReviews) VALUES (?, ?)");
+			pstmt.setString(1, authorEmail);
+			pstmt.setInt(2, reviews);
+			pstmt.executeUpdate();
+			result = true;
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+		return result;
+	}
+	
+	/**
+	 * Creates an account
+	 */
+	public static boolean createAccount(String email, String title, String forename, String surname, String affiliation, String password) {
+		boolean result = false;
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO account VALUES (?, ?, ?, ?, ?, ?)");
 			pstmt.setString(1, email);
 			pstmt.setString(2, title);
 			pstmt.setString(3, forename);
 			pstmt.setString(4, surname);
 			pstmt.setString(5, affiliation);
 			pstmt.setString(6, password);
+			pstmt.executeUpdate();
+			result = true;
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
@@ -57,7 +108,7 @@ public class AuthorTasks {
 	 */
 	public static String getArticleStatus(int articleID) {
 		//SQL statement to get the status' of an author's articles
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("SELECT Status FROM article WHERE ArticleID = ?");
 			pstmt.setInt(1, articleID);
 			ResultSet results = pstmt.executeQuery();

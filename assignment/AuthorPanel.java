@@ -105,7 +105,7 @@ public class AuthorPanel extends JPanel {
         		password = textFieldPassword.getText().trim();
         		userType = "Editor";
         		String hashpass = PasswordHash.getHashedString(password);
-        		Author author = new Author(email, title, forename, surname, affiliation, hashpass);
+        		Author author = new Author(title, forename, surname, email, affiliation, hashpass);
             	parent.getContentPane().removeAll();
             	SubmissionPanel nextPanel = new SubmissionPanel(author);
             	nextPanel.addListeners(parent);

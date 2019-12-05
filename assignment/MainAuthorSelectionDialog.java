@@ -67,10 +67,36 @@ public class MainAuthorSelectionDialog extends JDialog {
         pack();
         setResizable(false);
 	 }
-	public void addListeners(JPanel parent) { 
+	public void addListeners(SubmissionPanel parent) { 
 		btnMakeSubmission.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	System.out.println(radioButtons.getSelection().getActionCommand());
+            	String selectedEmail = radioButtons.getSelection().getActionCommand();
+            	System.out.println(selectedEmail);
+            	Boolean selectedMainAuthor = false;
+            	int totalSpinnerRevCounts = 0;
+            	ArrayList<Integer> reviewsCount = new ArrayList<Integer>();
+            	reviewsCount.clear();
+            	for(JSpinner spin : reviewCounters) {
+            		int spinnerValue = (int)spin.getValue();
+            		totalSpinnerRevCounts+= spinnerValue;
+            		reviewsCount.add(spinnerValue);
+            	}
+            	if (totalSpinnerRevCounts != 3) {
+            		JOptionPane.showMessageDialog(parent,"You must allocate exactly 3 reviews.");
+            		return;
+            	}
+            	//assume email is unique
+            	int i=0;
+            	for(Author auth : authors) {
+        			if(auth.getEmail() == selectedEmail) {
+        				parent.setMainAuthor(auth.getTitle(),auth.getForename(),auth.getSurname(),auth.getEmail());
+        				selectedMainAuthor = true;
+        			}
+        		} 
+            	if(selectedMainAuthor) {
+            		parent.submitSubmission(authors,reviewsCount);
+            		dispose();
+            	}
             }
         });
 		

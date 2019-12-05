@@ -144,7 +144,29 @@ public class SubmissionPanel extends JPanel {
 		respondSurname = surname;
 		respondEmail = email;
 	}
-	
+	public void submitSubmission(List<Author> allAuthors,List<Integer> reviewCounters) {
+		//Add all author accounts to DB
+    	int generatedSubID = AuthorTasks.submissionToDB(sub);
+    	int i =0;
+		for(Author ath : allAuthors) {
+			AuthorTasks.createAccount(ath.getEmail(), ath.getTitle(), ath.getForename(), ath.getSurname(), ath.getAffiliation(), ath.getPasswordhashed());
+			AuthorTasks.addSubAuthor(ath.getEmail(),generatedSubID);
+			AuthorTasks.addReviewerPrivileges(ath.getEmail(),(int)reviewCounters.get(i));
+			i++;
+		}
+		JFrame parent = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
+		
+		boolean succ = Main.login(author.getEmail(), author.getPasswordhashed(), "Author");
+    	if (succ) {
+    		System.out.println("succ");
+        	parent.getContentPane().removeAll();
+        	AuthorTasksPanel nextPanel = new AuthorTasksPanel(author.getEmail());
+        	nextPanel.addListeners(parent);
+        	parent.getContentPane().add(nextPanel);
+        	parent.revalidate(); 
+        	parent.repaint();   		
+    	}
+	}
     protected JButton buttonMakeSubmission = new JButton("Make Submission"); 
     protected JButton buttonBack = new JButton("Back"); 
     public void addListeners(JFrame parent) {
@@ -193,7 +215,7 @@ public class SubmissionPanel extends JPanel {
             	int i = listCoauthors.getSelectedIndex();
             	if(i > -1 && i<listCoauthors.getModel().getSize()) {
             		listModelCoauthors.remove(i);
-            		listCoauthors.remove(i);
+            		listCoauthorData.remove(i);
             	}
             }
         });

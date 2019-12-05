@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Submission {
+
 	/**
 	 * Gets a Submission object based on a subID
 	 */
