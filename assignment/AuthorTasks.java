@@ -1,5 +1,6 @@
 package assignment;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorTasks {
@@ -46,6 +47,28 @@ public class AuthorTasks {
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
+	
+	/**
+	 * Gets a list of submission ids written by the author with the supplied email
+	 */
+	public static ArrayList<Integer> getSubIDs(String email) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT SubID FROM submissionAuthors WHERE Email = ?");
+			pstmt.setString(1, email);
+			ResultSet result = pstmt.executeQuery();
+			ArrayList<Integer> list = new ArrayList<Integer>();
+			while (result.next()) {
+				list.add(result.getInt(1));
+			}
+			return list;
+		}
+		catch(Exception e) {
+			//
+		}
+		return null;
+	}
+	
+	
 	
 	/**
 	 * Gets the reviews related to a particular article

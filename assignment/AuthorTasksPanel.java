@@ -7,11 +7,15 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class AuthorTasksPanel extends JPanel {
-	public AuthorTasksPanel() {
+	public AuthorTasksPanel(String email) {
 		
 		//Check to see if has credentials here
 		JTabbedPane tabbedPane = new JTabbedPane();
@@ -80,6 +84,20 @@ public class AuthorTasksPanel extends JPanel {
         journalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         journalList.setLayoutOrientation(JList.VERTICAL);
         journalList.setVisibleRowCount(-1);
+        
+        submissions.clear();
+        listModelSubs.clear();       
+        ArrayList<Integer> subids = AuthorTasks.getSubIDs(email);
+        for(int i : subids) {
+        	System.out.println(i);
+        	Submission s = Submission.getSubmissionByID(i);
+        	System.out.println(s.getName());
+        	listModelSubs.addElement(s.getName());
+        	submissions.add(s);
+        };
+		
+        journalList.setModel(listModelSubs);
+        
         JScrollPane journalListScrollPane = new JScrollPane(journalList);
         journalListScrollPane.setPreferredSize(new Dimension(250, 80));
         
@@ -88,8 +106,7 @@ public class AuthorTasksPanel extends JPanel {
         //////// only show when having reviewer privileges
         ReviewerTasksPanel rp = new ReviewerTasksPanel();
         rp.addListeners();
-        tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");
-        
+        tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");        
     }
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
 	
@@ -101,6 +118,7 @@ public class AuthorTasksPanel extends JPanel {
     protected JLabel labelVerdict2 = new JLabel("Verdict 2: ");
     protected JLabel labelVerdict3 = new JLabel("Verdict 3: ");
     
+    protected DefaultListModel<String> listModelSubs = new DefaultListModel<>();
     
     protected JTextPane textPanePDFLink = new JTextPane();
     
@@ -114,8 +132,41 @@ public class AuthorTasksPanel extends JPanel {
     protected JLabel labelArticleStatus = new JLabel("Article Status: ");
     
     protected JList<String> journalList;
+    protected ArrayList<Submission> submissions = new ArrayList<Submission>();
     
     public void addListeners(JFrame parent) {
-    	
+    	journalList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!journalList.isSelectionEmpty()) {
+					Submission selected = submissions.get(journalList.getSelectedIndex());
+
+					labelArticleName.setText("Article: " + selected.getName());
+					labelISSN.setText("ISSN: " + selected.getJournalISSN());
+					textPanePDFLink.setText(selected.getPdfLink());
+					int reviewsDone = selected.getReviews().length;
+					labelReviewCount.setText("Reviews on Article: " + reviewsDone);
+					String statusString;
+					if (reviewsDone <= 0) {
+						statusString = "Submitted";
+					}
+					else if(selected.getInitVerdicts().length != 3){
+						statusString = "Reviews Recieved";
+					}
+					else if(selected.getResponses().length != 3) {
+						statusString = "Initial Verdict";
+					}
+					else if(selected.getVerdicts().length != 3) {
+						statusString = "Responses Recieved";
+					}
+					else if(!selected.getComplete()) {
+						statusString = "Final Verdict";
+					}
+					else {
+						statusString = "Completed";
+					}
+					labelArticleStatus.setText("Article Status: "+statusString);
+				}
+			}
+		});
     }
 }
