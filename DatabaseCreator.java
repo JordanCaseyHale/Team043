@@ -47,6 +47,7 @@ public class DatabaseCreator {
 			stmt.executeUpdate("DELETE FROM account");
 			*/
 			System.out.println(PasswordHash.getHashedString("password"));
+			/*
 			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestEditor@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s', 'Editor')",PasswordHash.getHashedString("password")));
 			stmt.executeUpdate("INSERT INTO journal VALUES ('2019-0001', 'Test2 Journal', 'TestEditor@aol.com')");
 			stmt.executeUpdate("INSERT INTO	journalEditors VALUES ('TestEditor@aol.com', '2019-0001')");
@@ -55,7 +56,10 @@ public class DatabaseCreator {
 			stmt.executeUpdate("INSERT INTO article VALUES (111, '2019-0001', 1, 11, '001-003', 'Test Article', 'Abstract paragraph', 'link')");
 			stmt.executeUpdate("INSERT INTO author VALUES (321, 'Mr', 'Test', 'Testy', 'TestAuthor@aol.com')");
 			stmt.executeUpdate("INSERT INTO articleAuthors VALUES (321, 111)");
-			
+			*/
+			//stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestAuthor@aol.com', 'Dr', 'John', 'Smith', 'University of Sheffield', '%s', 'Author')",PasswordHash.getHashedString("password")));
+			stmt.executeUpdate("INSERT INTO submission VALUES (123, 'Title test', 'Abstract test', 'pdf link', '2019-0001', 'TestAuthor@aol.com')");
+			stmt.executeUpdate("INSERT INTO submissionAuthors VALUES ('TestAuthor@aol.com', 123)");
 			System.out.println("end");
 		} catch (SQLException ex) {ex.printStackTrace();}
 	}
@@ -106,15 +110,16 @@ public class DatabaseCreator {
 					"	Email varchar(255),\r\n" + 
 					"   RemainingReviews int,\r\n" +
 					"	FOREIGN KEY (Email) REFERENCES account(Email));";
-			stmt.executeUpdate(str);
+			//stmt.executeUpdate(str);
 			str = "CREATE TABLE submission (\r\n" + 
 					"	SubID int NOT NULL PRIMARY KEY,\r\n" + 
 					"	Title varchar(255),\r\n" + 
 					"	Abstract varchar(255),\r\n" + 
+					"	Link varchar(255),\r\n" +
+					"	ISSN varchar(255),\r\n" + 
 					"	MainAuthor varchar(255),\r\n" + 
-					"	Link varchar(255),\r\n" + 
 					"	FOREIGN KEY (MainAuthor) REFERENCES account(Email));";
-			//stmt.executeUpdate(str);
+			stmt.executeUpdate(str);
 			str = "CREATE TABLE reviews (\r\n" + 
 					"	SubID int NOT NULL,\r\n" + 
 					"	RevID int NOT NULL,\r\n" + 
@@ -132,7 +137,7 @@ public class DatabaseCreator {
 					"	PRIMARY KEY (Email,SubID),\r\n" + 
 					"	FOREIGN KEY (Email) REFERENCES account(Email),\r\n" + 
 					"	FOREIGN KEY (SubID) REFERENCES submission(SubID));";
-			//stmt.executeUpdate(str);
+			stmt.executeUpdate(str);
 			str = "CREATE TABLE article (\r\n" + 
 					"	ArticleID int NOT NULL UNIQUE,\r\n" + 
 					"	ISSN varchar(255) NOT NULL,\r\n" + 
@@ -144,21 +149,21 @@ public class DatabaseCreator {
 					"	Link varchar(255),\r\n" + 
 					"	PRIMARY KEY (ISSN,Volume,Edition,PageRange),\r\n" + 
 					"	FOREIGN KEY (ISSN,Volume,Edition) REFERENCES edition(ISSN,Volume,Edition));"; 
-			//stmt.executeUpdate(str);
+			stmt.executeUpdate(str);
 			str = "CREATE TABLE author (\r\n" + 
 					"	AuthorID int PRIMARY KEY NOT NULL,\r\n" + 
 					"	Title varchar(255),\r\n" + 
 					"	Forename varchar(255),\r\n" + 
 					"	Surname varchar(255),\r\n" + 
 					"	Email varchar(255));";
-			//stmt.executeUpdate(str);
+			stmt.executeUpdate(str);
 			str = "CREATE TABLE articleAuthors (\r\n" + 
 					"AuthorID int NOT NULL,\r\n" + 
 					"ArticleID int NOT NULL,\r\n" + 
 					"PRIMARY KEY (AuthorID,ArticleID),\r\n" + 
 					"FOREIGN KEY (AuthorID) REFERENCES author(AuthorID),\r\n" + 
 					"FOREIGN KEY (ArticleID) REFERENCES article(ArticleID));";
-			//stmt.executeUpdate(str);
+			stmt.executeUpdate(str);
 			
 		} catch (SQLException ex) {ex.printStackTrace();}
 	}
@@ -166,18 +171,18 @@ public class DatabaseCreator {
 	public static void dbDrop() {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")) {
 			Statement stmt = con.createStatement();
-			//stmt.executeUpdate("DROP TABLE articleAuthors;");
-			//stmt.executeUpdate("DROP TABLE author;");
-			//stmt.executeUpdate("DROP TABLE article;");
-			//stmt.executeUpdate("DROP TABLE submissionAuthors;");
+			stmt.executeUpdate("DROP TABLE articleAuthors;");
+			stmt.executeUpdate("DROP TABLE author;");
+			stmt.executeUpdate("DROP TABLE article;");
+			stmt.executeUpdate("DROP TABLE submissionAuthors;");
 			stmt.executeUpdate("DROP TABLE reviews;");
-			//stmt.executeUpdate("DROP TABLE submission;");
+			stmt.executeUpdate("DROP TABLE submission;");
 			stmt.executeUpdate("DROP TABLE reviewers;");
-			//stmt.executeUpdate("DROP TABLE edition;");
-			//stmt.executeUpdate("DROP TABLE volume;");
-			//stmt.executeUpdate("DROP TABLE journalEditors;");
-			//stmt.executeUpdate("DROP TABLE journal;");
-			//stmt.executeUpdate("DROP TABLE account;");
+			stmt.executeUpdate("DROP TABLE edition;");
+			stmt.executeUpdate("DROP TABLE volume;");
+			stmt.executeUpdate("DROP TABLE journalEditors;");
+			stmt.executeUpdate("DROP TABLE journal;");
+			stmt.executeUpdate("DROP TABLE account;");
 		} catch (SQLException e) {e.printStackTrace();}
 	}
 }
