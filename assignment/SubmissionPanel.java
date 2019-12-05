@@ -4,12 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.*;
 
 public class SubmissionPanel extends JPanel {
 	//TODO: Dialog where you can allocate reviews and choose correnspondent
-	//TODO: add the journal selection combobox
 	private Author author;
 	
 	public SubmissionPanel(Author author) {
@@ -39,10 +39,25 @@ public class SubmissionPanel extends JPanel {
 
         constraints.gridx = 1;
         constraints.gridwidth = 2;
-        grid.add(textFieldPDFLink,constraints);  
-
+        grid.add(textFieldPDFLink,constraints);
+        
         constraints.gridx = 0;
         constraints.gridy = 2;     
+        constraints.gridwidth = 1;
+        grid.add(labelJournal, constraints);
+
+        constraints.gridx = 1;
+        constraints.gridwidth = 2;
+        List<Journal> journalsData = JournalList.getJournals();
+		for (int i=0; i<(journalsData.size());i++) {
+			journalComboBoxModel.addElement(journalsData.get(i).getTitle() + ", ISSN: " + journalsData.get(i).getISSN());
+		}
+        comboBoxJournals.setModel(journalComboBoxModel);
+        grid.add(comboBoxJournals,constraints); 
+        
+        
+        constraints.gridx = 0;
+        constraints.gridy = 3;     
         constraints.gridwidth = 1;
         grid.add(labelCoauthorList, constraints);
 
@@ -57,7 +72,7 @@ public class SubmissionPanel extends JPanel {
         constraints.weightx = 1;
         constraints.weighty = 0.5;
         constraints.gridx = 0;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
         constraints.gridwidth = 3;
         
         
@@ -65,16 +80,20 @@ public class SubmissionPanel extends JPanel {
         listCoauthors.setLayoutOrientation(JList.VERTICAL);
         JScrollPane sp = new JScrollPane(listCoauthors);
         JScrollBar bar = sp.getVerticalScrollBar();
-        bar.setPreferredSize(new Dimension(40, 0));
+        bar.setPreferredSize(new Dimension(10, 0));
         grid.add(sp,constraints); 
         
         constraints.weightx = 0.3;
         constraints.gridx = 0;
-        constraints.gridy = 4;
+        constraints.gridy = 5;
         constraints.gridwidth = 1;
         grid.add(labelAbstract, constraints);
         
-        this.add(textAreaAbstract,BorderLayout.CENTER);
+        textAreaAbstract.setLineWrap(true);
+        JScrollPane textsp = new JScrollPane(textAreaAbstract);
+        JScrollBar textspbar = textsp.getVerticalScrollBar();
+        textspbar.setPreferredSize(new Dimension(10, 0));
+        this.add(textsp,BorderLayout.CENTER);
         
        
         JPanel bottomButtons = new JPanel(new FlowLayout());
@@ -94,6 +113,8 @@ public class SubmissionPanel extends JPanel {
 	protected JList<String> listCoauthors = new JList<String>(listModelCoauthors);	
 	protected ArrayList<Author> listCoauthorData = new ArrayList<Author>();
 	protected ArrayList<String> mainAuthorData;
+	protected JComboBox<String> comboBoxJournals = new JComboBox<String>();
+    protected DefaultComboBoxModel<String> journalComboBoxModel = new DefaultComboBoxModel<String>();	
 	
 	protected String respondTitle;
 	protected String respondForename;
@@ -124,7 +145,6 @@ public class SubmissionPanel extends JPanel {
 		respondEmail = email;
 	}
 	
-	
     protected JButton buttonMakeSubmission = new JButton("Make Submission"); 
     protected JButton buttonBack = new JButton("Back"); 
     public void addListeners(JFrame parent) {
@@ -138,6 +158,7 @@ public class SubmissionPanel extends JPanel {
             	parent.repaint(); 
             }
         });
+        SubmissionPanel parentSubPanel = this;
         buttonMakeSubmission.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	//pass info to submission object
@@ -150,9 +171,13 @@ public class SubmissionPanel extends JPanel {
             	sub.setRespondForename(respondForename);
             	sub.setRespondSurname(respondSurname);
             	sub.setRespondEmail(respondEmail);
+            	sub.setJournal(((String) comboBoxJournals.getSelectedItem()).split("ISSN:")[1].trim());
+            	MainAuthorSelectionDialog dlg = new MainAuthorSelectionDialog(sub,author);
+            	dlg.addListeners(parentSubPanel);
+            	dlg.setVisible(true);
             }
         });
-        SubmissionPanel parentSubPanel = this;
+
         buttonAddCoauthor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	NewCoauthorDialog dlg = new NewCoauthorDialog(listModelCoauthors);

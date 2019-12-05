@@ -26,7 +26,7 @@ public class NewCoauthorDialog extends JDialog {
 	public NewCoauthorDialog(DefaultListModel<String> coauthList) {
 		this.setTitle("Add New Co-author");
 		JPanel panel = new JPanel(new GridBagLayout());
-		panel.setPreferredSize(new Dimension (300,200));
+		panel.setPreferredSize(new Dimension (300,400));
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		constraints.anchor = GridBagConstraints.WEST;

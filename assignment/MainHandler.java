@@ -7,9 +7,9 @@ public class MainHandler extends JFrame {
 	
 	public static void main(String[] args) 
 	{  
-		//MainPanel introPanel = new MainPanel();
+		MainPanel introPanel = new MainPanel();
 		//EditorTasksPanel introPanel = new EditorTasksPanel();
-		AuthorTasksPanel introPanel = new AuthorTasksPanel();
+		//AuthorTasksPanel introPanel = new AuthorTasksPanel();
 		JFrame mainFrame = new JFrame();
 		mainFrame.setTitle("JournalManager");
 		mainFrame.setPreferredSize(new Dimension(800, 600));
