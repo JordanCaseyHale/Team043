@@ -22,6 +22,18 @@ public class AuthorTasks {
 		boolean result = false;
 		String str = String.format("INSERT INTO submission VALUES (%s,%s,%s,%s)",title,abstractPara,mainAuthor,link);
 		result = MySQLConnection.doUpdate(str);
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO submission VALUES (?, ?, ?, ?)");
+			pstmt.setString(1, title);
+			pstmt.setString(2, abstractPara);
+			pstmt.setString(3, mainAuthor);
+			pstmt.setString(4, link);
+			pstmt.executeUpdate();
+			result = true;
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
 		return result;
 	}
 	
@@ -29,6 +41,18 @@ public class AuthorTasks {
 		boolean result = false;
 		String str = String.format("INSERT INTO account VALUES (%s,%s,%s,%s,%s,%s,%s)",email,title,forename,surname,affiliation,password,userType);
 		result = MySQLConnection.doUpdate(str);
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO account VALUES (?, ?, ?, ?, ?, ?");
+			pstmt.setString(1, email);
+			pstmt.setString(2, title);
+			pstmt.setString(3, forename);
+			pstmt.setString(4, surname);
+			pstmt.setString(5, affiliation);
+			pstmt.setString(6, password);
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
 		return result;
 	}
 	
@@ -37,14 +61,16 @@ public class AuthorTasks {
 	 */
 	public static String getArticleStatus(int articleID) {
 		//SQL statement to get the status' of an author's articles
-		boolean result = false;
-		String str = String.format("SELECT Status FROM article WHERE ArticleID = %2d",articleID);
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT Status FROM article WHERE ArticleID = ?");
+			pstmt.setInt(1, articleID);
+			ResultSet results = pstmt.executeQuery();
 			String status = results.getString(0);
 			return status;
-		} catch (SQLException e) {e.printStackTrace();}
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -77,12 +103,12 @@ public class AuthorTasks {
 	 */
 	public static List<List<String>> getSubmissionReviews(int subID) {
 		//SQL statement to get article reviews
-		String str = String.format("SELECT Initial Verdict, Response, Verdict FROM reviews WHERE SubID = %2d",subID);
 		List<String> temp = null;
 		List<List<String>> subReviews = null;
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT Initial Verdict, Response, Verdict FROM reviews WHERE SubID = ?");
+			pstmt.setInt(1, subID);
+			ResultSet results = pstmt.executeQuery();
 			while (results.next()) {
 				temp.add(results.getString(1));
 				temp.add(results.getString(2));
@@ -101,7 +127,15 @@ public class AuthorTasks {
 	 */
 	public static void submitReviewResponse(String response, int subID, int revID) {
 		//SQL statement to add response to database
-		String str = String.format("INSERT Response INTO reviews WHERE SubID = %2d, RevID = %2d", subID, revID);
-		MySQLConnection.doUpdate(str);
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET response = ? WHERE SubID = ?, RevID = ?");
+			pstmt.setString(1,response);
+			pstmt.setInt(2, subID);
+			pstmt.setInt(3,  revID);
+			pstmt.executeUpdate();
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
 	}
 }

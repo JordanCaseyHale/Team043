@@ -17,4 +17,11 @@ public class PasswordHash {
 		}
 		return null;
 	}
+	
+	public static String checkInput(String query) {
+		if(query.contains(";")) {
+			query = query.substring(0,query.indexOf(';'));
+		}
+		return query;
+	}
 }
