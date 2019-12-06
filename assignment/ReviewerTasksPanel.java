@@ -11,20 +11,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class ReviewerTasksPanel extends JPanel {
 	public ReviewerTasksPanel(String email) {
 		
 		//Check to see if has credentials here
+		this.email = email;
         this.setLayout(new BorderLayout());
       
         JPanel topButtons = new JPanel(new FlowLayout());
+        labelTopMessage.setText("Welcome, "+email);
         topButtons.add(labelTopMessage);
         topButtons.add(buttonLogout);
         topButtons.add(buttonResetPassword);
         this.add(topButtons,BorderLayout.NORTH);
-
-        journalList = new JList<String>();
+        update();
+        
         journalList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         journalList.setLayoutOrientation(JList.VERTICAL);
         journalList.setVisibleRowCount(-1);
@@ -35,6 +39,7 @@ public class ReviewerTasksPanel extends JPanel {
         
         JPanel sideStuff = new JPanel();
         sideStuff.setLayout(new BoxLayout(sideStuff, BoxLayout.Y_AXIS));
+        
         sideStuff.add(labelReviewsNeeded);
         sideStuff.add(labelSideMessage);
         sideStuff.add(buttonChooseArticles);
@@ -68,7 +73,6 @@ public class ReviewerTasksPanel extends JPanel {
         articleData.add(buttonReview, constraints);       
         
         
-        selectedJournalList = new JList<String>();
         selectedJournalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectedJournalList.setLayoutOrientation(JList.VERTICAL);
         selectedJournalList.setVisibleRowCount(-1);
@@ -82,13 +86,24 @@ public class ReviewerTasksPanel extends JPanel {
         articleData.add(selectedJournalListScrollPane, constraints);  
         this.add(articleData,BorderLayout.SOUTH); 
         
-        ArrayList<Integer> subids = AuthorTasks.getSubIDs(email);
-        for(int i : subids) {
-        	Submission s = Submission.getSubmissionByID(i);
-        	submissions.add(s);
-        };
-        
     }
+	protected void update() {
+		journalListModel.clear();
+		selectedJournalListModel.clear();
+        toSelect.clear();
+        toSelect = ReviewerTasks.getReviewableList(this.email);
+        for(Submission sub:toSelect) {
+        	journalListModel.addElement(sub.getName());
+        }
+        journalList.setModel(journalListModel);
+        alreadySelected.clear();
+		alreadySelected = ReviewerTasks.getReviewsList(this.email);
+		for(Submission sub:alreadySelected) {
+        	selectedJournalListModel.addElement(sub.getName());
+        }
+		selectedJournalList.setModel(selectedJournalListModel);
+		labelReviewsNeeded.setText("Reviews to do: "+ReviewerTasks.ReviewsRemaining(email));
+	}
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
 	
 	protected JLabel labelReviewsNeeded = new JLabel("Reviews to do: ");
@@ -106,17 +121,46 @@ public class ReviewerTasksPanel extends JPanel {
     protected JButton buttonResetPassword = new JButton("Change Password");
     protected JButton buttonChooseArticles = new JButton("Choose to Review");
     
+    protected DefaultListModel<String> journalListModel = new DefaultListModel<>();
+    protected DefaultListModel<String> selectedJournalListModel = new DefaultListModel<>();
     
-    protected JList<String> journalList;
-    protected JList<String> selectedJournalList;
+    protected ArrayList<Submission> toSelect  = new ArrayList<Submission>();
+    protected ArrayList<Submission> alreadySelected  = new ArrayList<Submission>();
+    protected String email;
+    
+    protected JList<String> journalList = new JList<String>(journalListModel);
+    protected JList<String> selectedJournalList = new JList<String>(selectedJournalListModel);
     ReviewerTasksPanel parentRevPanel = this;
     
-    protected ArrayList<Submission> submissions = new ArrayList<Submission>();
-    
-    public void addListeners() {
+    public void addListeners(AuthorTasksPanel parent) {
+    	 buttonChooseArticles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(journalList.getSelectedIndices().length > ReviewerTasks.ReviewsRemaining(email)) {
+					JOptionPane.showMessageDialog(parentRevPanel, "You can not select more reviews than you currently have allocated.");
+					return;
+				}
+				for(int i:journalList.getSelectedIndices()) {
+					Submission sub = toSelect.get(i);
+					ReviewerTasks.submitChosenSubmission(ReviewerTasks.getReviewerID(email), sub.getSubID());
+				}
+				update();
+			} 
+    	 });
+    	 selectedJournalList.addListSelectionListener(new ListSelectionListener() {
+ 			public void valueChanged(ListSelectionEvent e) {
+ 				if (!selectedJournalList.isSelectionEmpty()) {
+ 					Submission selected = alreadySelected.get(selectedJournalList.getSelectedIndex());
+
+ 					labelArticleName.setText("Article: " + selected.getName());
+ 					labelISSN.setText("ISSN: " + selected.getJournal());
+ 					textPanePDFLink.setText(selected.getPdfLink());
+ 				}	
+ 			}
+ 		});
     	 buttonReview.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent e) {
-            	MakeReviewDialog dlg = new MakeReviewDialog();
+            	Submission selected = alreadySelected.get(selectedJournalList.getSelectedIndex());
+            	MakeReviewDialog dlg = new MakeReviewDialog(selected,ReviewerTasks.getReviewerID(email));
              	dlg.addListeners(parentRevPanel);
              	dlg.setVisible(true);
              	System.out.print("make panel");
@@ -128,6 +172,13 @@ public class ReviewerTasksPanel extends JPanel {
     			 
     		 }
     	 });
+    	 buttonLogout.addActionListener(new ActionListener() {
+     		public void actionPerformed(ActionEvent e) {
+     			parent.buttonLogout.doClick();
+     		}
+     	});
     }
+
+
 
 }

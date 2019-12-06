@@ -110,9 +110,11 @@ public class AuthorTasksPanel extends JPanel {
         mainPanel.add(journalListScrollPane,BorderLayout.EAST);
         
         //only show when having reviewer privileges
-        ReviewerTasksPanel rp = new ReviewerTasksPanel(email);
-        rp.addListeners();
-        tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");        
+        if (ReviewerTasks.ReviewsRemaining(email)>0) {
+        	ReviewerTasksPanel rp = new ReviewerTasksPanel(email);
+        	rp.addListeners(this);
+        	tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");        
+        }
     }
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
 	
@@ -154,17 +156,13 @@ public class AuthorTasksPanel extends JPanel {
 					String[] initVers = selected.getInitVerdicts();
 					String[] vers = selected.getVerdicts();
 					String[] responses = selected.getResponses();
-					int reviewCounter = 0;
 					int initVersCounter = 0;
 					int responsesCounter = 0;
 					int versCounter = 0;
 					for(int i = 0;i<3;i++) {
 						String label = "";
-						if(reviewsDone[i] != 0) {
-							reviewCounter++;
-						}
 						if(responses[i] != null) {
-							reviewCounter++;
+							responsesCounter++;
 						}
 						if(initVers[i] != null) {
 							initVersCounter++;
@@ -194,9 +192,9 @@ public class AuthorTasksPanel extends JPanel {
 
 					}
 					
-					labelReviewCount.setText("Reviews on Article: " + reviewCounter);
+					labelReviewCount.setText("Reviews on Article: " + (3-Submission.ReviewsLeft(selected)));
 					String statusString;
-					if (reviewCounter <= 0) {
+					if (Submission.ReviewsLeft(selected)>0) {
 						statusString = "Submitted";
 					}
 					else if(initVersCounter < 3){
@@ -220,12 +218,7 @@ public class AuthorTasksPanel extends JPanel {
 		});
     	buttonLogout.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			parent.getContentPane().removeAll();
-        		MainPanel nextPanel = new MainPanel();
-        		nextPanel.addListeners(parent);
-        		parent.getContentPane().add(nextPanel);
-        		parent.revalidate(); 
-        		parent.repaint();
+    			MainHandler.logout(parent);
     		}
     	});
     	

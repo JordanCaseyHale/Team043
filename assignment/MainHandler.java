@@ -7,8 +7,8 @@ public class MainHandler extends JFrame {
 	
 	public static void main(String[] args) 
 	{  
-		//MainPanel introPanel = new MainPanel();
-		EditorTasksPanel introPanel = new EditorTasksPanel("TestEditor@aol.com");
+		MainPanel introPanel = new MainPanel();
+		//EditorTasksPanel introPanel = new EditorTasksPanel("TestEditor@aol.com");
 		//AuthorTasksPanel introPanel = new AuthorTasksPanel();
 		//ReviewerTasksPanel introPanel = new ReviewerTasksPanel("");
 		JFrame mainFrame = new JFrame();
@@ -23,7 +23,12 @@ public class MainHandler extends JFrame {
 	
 	//protected
 	
-	public MainHandler(){
-		
+	public static void logout(JFrame parent) {
+		parent.getContentPane().removeAll();
+		MainPanel nextPanel = new MainPanel();
+		nextPanel.addListeners(parent);
+		parent.getContentPane().add(nextPanel);
+		parent.revalidate(); 
+		parent.repaint();
 	}
 }

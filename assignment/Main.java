@@ -9,10 +9,7 @@ import java.sql.Statement;
 
 public class Main {
 	
-	public static void main(String[] args) {
-		//Start Window
-		
-	}
+
 	
 	/**
 	 * Checks the login details against the database

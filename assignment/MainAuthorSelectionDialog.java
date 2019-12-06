@@ -85,11 +85,10 @@ public class MainAuthorSelectionDialog extends JDialog {
             		JOptionPane.showMessageDialog(parent,"You must allocate exactly 3 reviews.");
             		return;
             	}
-            	//assume email is unique
-            	int i=0;
             	for(Author auth : authors) {
         			if(auth.getEmail() == selectedEmail) {
         				parent.setMainAuthor(auth.getTitle(),auth.getForename(),auth.getSurname(),auth.getEmail());
+        				System.out.println("inputted author to system");
         				selectedMainAuthor = true;
         			}
         		} 

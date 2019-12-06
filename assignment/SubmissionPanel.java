@@ -139,21 +139,24 @@ public class SubmissionPanel extends JPanel {
 	
 	public void setMainAuthor(String title, String forename, String surname, String email) {
 		//mainAuthorData = new ArrayList<String>(Arrays.asList(title,forename,surname,email,pwhash));
-		respondTitle = title;
-		respondForename = forename;
-		respondSurname = surname;
-		respondEmail = email;
+    	sub.setRespondTitle(title);
+    	sub.setRespondForename(forename);
+    	sub.setRespondSurname(surname);
+    	sub.setRespondEmail(email);
 	}
 	public void submitSubmission(List<Author> allAuthors,List<Integer> reviewCounters) {
 		//Add all author accounts to DB
-    	int generatedSubID = AuthorTasks.submissionToDB(sub);
     	int i =0;
 		for(Author ath : allAuthors) {
 			AuthorTasks.createAccount(ath.getEmail(), ath.getTitle(), ath.getForename(), ath.getSurname(), ath.getAffiliation(), ath.getPasswordhashed());
-			AuthorTasks.addSubAuthor(ath.getEmail(),generatedSubID);
 			AuthorTasks.addReviewerPrivileges(ath.getEmail(),(int)reviewCounters.get(i));
 			i++;
 		}
+		int generatedSubID = AuthorTasks.submissionToDB(sub);
+		for(Author ath : allAuthors) {
+			AuthorTasks.addSubAuthor(ath.getEmail(),generatedSubID);
+		}
+		
 		JFrame parent = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
 		
 		boolean succ = Main.login(author.getEmail(), author.getPasswordhashed(), "Author");
@@ -188,10 +191,6 @@ public class SubmissionPanel extends JPanel {
             	sub.setPdfLink(textFieldPDFLink.getText().trim());
             	sub.setAbstractPara(textAreaAbstract.getText().trim());
             	sub.setCoAuthors(listCoauthorData);
-            	sub.setRespondTitle(respondTitle);
-            	sub.setRespondForename(respondForename);
-            	sub.setRespondSurname(respondSurname);
-            	sub.setRespondEmail(respondEmail);
             	sub.setJournal(((String) comboBoxJournals.getSelectedItem()).split("ISSN:")[1].trim());
             	ArrayList<Author> allAuthors = new ArrayList<Author>();
             	allAuthors.addAll(listCoauthorData);

@@ -121,7 +121,7 @@ public class AuthorTasks {
 		catch(Exception e) {
 			//
 		}
-		return null;
+		return new ArrayList<Integer>();
 	}
 	
 	

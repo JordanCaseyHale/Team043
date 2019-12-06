@@ -7,7 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Submission {
-
+	/**
+	 * Checks if Submission still requires reviews
+	 */
+	public static int ReviewsLeft (Submission s) {
+		int[] reviewsDone = s.getReviews();
+		int reviewCounter = 0;
+		for(int i = 0;i<3;i++) {
+			if(reviewsDone[i] != 0) {
+				reviewCounter++;
+			}
+		}
+		return 3-reviewCounter;
+	}
 	/**
 	 * Gets a Submission object based on a subID
 	 */
@@ -19,11 +31,19 @@ public class Submission {
 			pstmt.setInt(1, subID);
 			ResultSet result = pstmt.executeQuery();
 			String respondEmail = null;
+			String subTitle = null;
+			String subAbstract = null;
+			String subLink = null;
+			String subISSN = null;
 			if (result.first()) {
+				subTitle = result.getString(2);
+				subAbstract = result.getString(3);
+				subLink = result.getString(4);
+				subISSN = result.getString(5);
 				respondEmail = result.getString(6);
 			}				
-			PreparedStatement getSubAuthstmt = con.prepareStatement("SELECT submissionAuthors.Email,account.Title,account.Forename,account.Surname,account.Affiliation,account.Password FROM account"
-					+ " INNER JOIN submissionAuthors ON submissionAuthors.Email = account.Email WHERE submissionAuthors.SubID = ?");
+			PreparedStatement getSubAuthstmt = con.prepareStatement("SELECT account.Email,account.Title,account.Forename,account.Surname,account.Affiliation,account.Password FROM account"
+					+ " INNER JOIN submissionAuthors USING(Email) WHERE submissionAuthors.SubID = ?");
 			getSubAuthstmt.setInt(1,subID);
 			ResultSet subAuthResult = getSubAuthstmt.executeQuery();
 			
@@ -54,19 +74,17 @@ public class Submission {
 			ResultSet authResult = getRespondAuthorstmt.executeQuery();
 			
 			if (authResult.first()) {
-				returnedSub = new Submission(result.getString(2),result.getString(3),result.getString(4),authResult.getString(1),authResult.getString(2)
-					,authResult.getString(3),respondEmail,coauths,result.getString(5),subID);
+				returnedSub = new Submission(subTitle,subAbstract,subLink,authResult.getString(1),authResult.getString(2),authResult.getString(3),respondEmail,coauths,subISSN,subID);
 				returnedSub.setReviews(revIDs);
 				returnedSub.setInitVerdicts(initVers);
 				returnedSub.setVerdicts(vers);
-				return returnedSub;
 			}
 			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return returnedSub;
 	}
 	
 	//Instances Variables
