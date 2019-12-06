@@ -85,12 +85,13 @@ public class Main {
 	 * Changes the password for the account
 	 * @param password
 	 */
-	public static void changePassword(String password) {
+	public static void changePassword(String password, String email) {
 		//Encrypt password probably
 		//SQL statement to change the password
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("UPDATE account SET password = ? WHERE email = ?");
 			pstmt.setString(1, PasswordHash.getHashedString(password));
+			pstmt.setString(2, email);
 			//add email to statement
 			pstmt.executeUpdate();
 		}

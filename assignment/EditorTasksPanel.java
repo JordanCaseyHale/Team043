@@ -39,7 +39,16 @@ public class EditorTasksPanel extends JPanel {
         topButtons.add(buttonLogout);
         topButtons.add(buttonResetPassword);
         topButtons.add(buttonAddEditor);
+        topButtons.add(buttonManageChiefRole);
+        topButtons.add(buttonRetire);
         this.add(topButtons,BorderLayout.NORTH);
+        
+		editionList = new JList<String>();
+		editionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		editionList.setLayoutOrientation(JList.VERTICAL);
+		editionList.setVisibleRowCount(-1);
+		JScrollPane editionListScrollPane = new JScrollPane(editionList);
+		editionListScrollPane.setPreferredSize(new Dimension(100,200));
         
         JPanel articleData = new JPanel(new GridBagLayout());
 
@@ -66,13 +75,23 @@ public class EditorTasksPanel extends JPanel {
         articleData.add(labelFinalVerdict2, constraints); 
         constraints.gridx = 2;
         articleData.add(labelFinalVerdict3, constraints); 
+        constraints.gridx = 1;
+        constraints.gridy = 4;
+        articleData.add(buttonAddToEdition, constraints); 
         constraints.gridx = 0;
         constraints.gridy = 4;
-        articleData.add(buttonAccept, constraints); 
-        constraints.gridy = 5;
         articleData.add(buttonReject, constraints); 
+        constraints.gridx = 2;
+        constraints.gridy = 4;
+        articleData.add(buttonAddEditionToJournal, constraints);
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        articleData.add(labelUnpublishedEdition, constraints);
+        constraints.gridx = 0;
+        constraints.gridwidth = 3;
         constraints.gridy = 6;
-        articleData.add(buttonAddToJournal, constraints); 
+        constraints.weighty = 0.2;
+        articleData.add(editionListScrollPane, constraints);
         this.add(articleData,BorderLayout.CENTER);        
  
         submissionList = new JList<String>();
@@ -85,9 +104,19 @@ public class EditorTasksPanel extends JPanel {
         this.add(journalListScrollPane,BorderLayout.EAST);
         
 		for (Submission s : subs) {
-			listModel.addElement(s.getName());
+			listModel.addElement("ISSN: "+s.getJournal()+" - "+s.getSubID()+", "+s.getName());
 		}
 		submissionList.setModel(listModel);
+		
+		//Show all unpublished editions
+		System.out.println(listModel);
+
+		for (Edition ed : eds) {
+			listEditionModel.addElement("ISSN: "+ed.getISSN()+", Volume: "+ed.getVolume()+", Edition: "+ed.getEdition());
+		}
+		String[] exampleData = {"Click on a "};
+		editionList.setModel(listEditionModel);
+		
     }
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
 	
@@ -97,6 +126,7 @@ public class EditorTasksPanel extends JPanel {
     protected JLabel labelFinalVerdict1 = new JLabel("Verdict 1: ");
     protected JLabel labelFinalVerdict2 = new JLabel("Verdict 2: ");
     protected JLabel labelFinalVerdict3 = new JLabel("Verdict 3: ");
+    protected JLabel labelUnpublishedEdition = new JLabel("Unpublished Editions");
     
     protected JLabel labelArticleStatus = new JLabel("Article Status: ");    
     
@@ -105,14 +135,19 @@ public class EditorTasksPanel extends JPanel {
     protected JButton buttonLogout = new JButton("Log Out");
     protected JButton buttonResetPassword = new JButton("Change Password");
     protected JButton buttonAddEditor = new JButton("Add New Editor");
-    protected JButton buttonAccept = new JButton("Accept");
+    protected JButton buttonManageChiefRole = new JButton("Manage Chief Roles");
+    protected JButton buttonRetire = new JButton("Retire");
+    protected JButton buttonAddToEdition = new JButton("Add Article to Edition");
     protected JButton buttonReject = new JButton("Reject");
-    protected JButton buttonAddToJournal = new JButton("Add To Journal");
+    protected JButton buttonAddEditionToJournal = new JButton("Add Edition to Journal");
     
     protected JList<String> submissionList;
+    protected JList<String> editionList;
     
     private DefaultListModel<String> listModel = new DefaultListModel<>();
 	private List<Submission> subs = EditorTasks.getSubmissions();
+	private DefaultListModel<String> listEditionModel = new DefaultListModel<>();
+	private List<Edition> eds = EditorTasks.getUnpublishedEditions();
     
     public void addListeners(JFrame parent) {
     	buttonLogout.addActionListener(new ActionListener() {
@@ -135,8 +170,8 @@ public class EditorTasksPanel extends JPanel {
 				if (!buttonReject.isEnabled()) {
 					buttonReject.setEnabled(true);
 				}
-				if (!buttonAddToJournal.isEnabled()) {
-					buttonAddToJournal.setEnabled(true);
+				if (!buttonAddToEdition.isEnabled()) {
+					buttonAddToEdition.setEnabled(true);
 				}
 				//gets info to display
 				if (!submissionList.isSelectionEmpty()) {
@@ -151,16 +186,98 @@ public class EditorTasksPanel extends JPanel {
 				if (size>0) {
 					labelFinalVerdict1.setText("Verdict 1: "+verdicts.get(0));
 				}
+				else {
+					labelFinalVerdict1.setText("Verdict 1: Not completed");
+				}
 				if (size>1) {
 					labelFinalVerdict2.setText("Verdict 2: "+verdicts.get(1));
+				}
+				else {
+					labelFinalVerdict2.setText("Verdict 2: Not completed");
 				}
 				if (size>2) {
 					labelFinalVerdict3.setText("Verdict 3: "+verdicts.get(2));
 				}
+				else {
+					labelFinalVerdict3.setText("Verdict 3: Not completed");
+					buttonReject.setEnabled(false);
+					buttonAddToEdition.setEnabled(false);
+				}
+				//fill out edition list
+				System.out.println("Click");
 				
 				//uses the info to decide status
 				//disable certain buttons
 			}
+    	});
+    	
+    	buttonReject.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if (!submissionList.isSelectionEmpty()) {
+    				String subValue = submissionList.getSelectedValue();
+    				String subID = subValue.split(" - ")[2].split(",")[0].trim();
+    				EditorTasks.rejectSubmission(subID);
+    			}
+    		}
+    	});
+    	
+    	buttonAddToEdition.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if (!submissionList.isSelectionEmpty()) {
+    				if (!editionList.isSelectionEmpty()) {
+    					String subValue = submissionList.getSelectedValue();
+    					String edValue = editionList.getSelectedValue();
+    					int editionSel = Integer.parseInt(edValue.split("Edition: ")[1].trim());
+    					int volumeSel = Integer.parseInt(edValue.split(", ")[1].replaceAll("Volume: ", "").trim());
+    					String issnSel = edValue.split(", ")[0].replaceAll("ISSN: ", "").trim();
+    					String subID = subValue.split(" - ")[2].split(",")[0].trim();
+    					String subISSN = subValue.split(" ")[1].trim();
+    					System.out.println("issnSel = "+issnSel);
+    					System.out.println("subISSN = "+subISSN);
+    					//get sub issn
+    					//if match edition issn then
+    					if (subID.contentEquals(subISSN)) {
+    						EditorTasks.publishArticle(subID, issnSel, volumeSel, editionSel);
+    					}
+    				}
+    			}
+    			//get info on article
+    			//get info on selected edition
+    			//publish article
+    		}
+    	});
+    	
+    	buttonAddEditionToJournal.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			//get edition selected
+    			//submitted edition
+    			if (!editionList.isSelectionEmpty()) {
+    				String valueSelected = editionList.getSelectedValue();
+    				EditorTasks.publishEdition(valueSelected);
+    			}
+    		}
+    	});
+    	
+    	buttonManageChiefRole.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			//create dialog to give other editor chief role
+    			
+    		}
+    	});
+    	
+    	buttonRetire.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			
+    		}
+    	});
+    	
+    	buttonResetPassword.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			System.out.println(EditorTasksPanel.email);
+    			ChangePasswordDialog cpd = new ChangePasswordDialog(EditorTasksPanel.email);
+    			cpd.AddListeners();
+    			cpd.setVisible(true);
+    		}
     	});
     }
 }

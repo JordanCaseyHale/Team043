@@ -1,13 +1,12 @@
 import java.sql.*;
 
-import assignment.MySQLConnection;
 import assignment.PasswordHash;
 
 public class DatabaseCreator {
 	public static void main(String [] args) {
 		//dbDrop();
 		//dbCreation();
-		dbSetUp();
+		//dbSetUp();
 		/*
 		try (Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043?user=team043&password=38796815")){
 			Statement stmt = con.createStatement();
@@ -52,7 +51,7 @@ public class DatabaseCreator {
 			stmt.executeUpdate("INSERT INTO journal VALUES ('2019-0001', 'Test2 Journal', 'TestEditor@aol.com')");
 			stmt.executeUpdate("INSERT INTO	journalEditors VALUES ('TestEditor@aol.com', '2019-0001')");
 			stmt.executeUpdate("INSERT INTO volume VALUES ('2019-0001', 1, 2019)");
-			stmt.executeUpdate("INSERT INTO edition VALUES ('2019-0001', 1, 11, 'December')");
+			stmt.executeUpdate("INSERT INTO edition VALUES ('2019-0001', 1, 11, 'December', 1)");
 			stmt.executeUpdate("INSERT INTO article VALUES (111, '2019-0001', 1, 11, '001-003', 'Test Article', 'Abstract paragraph', 'link')");
 			stmt.executeUpdate("INSERT INTO author VALUES (321, 'Mr', 'Test', 'Testy', 'TestAuthor@aol.com')");
 			stmt.executeUpdate("INSERT INTO articleAuthors VALUES (321, 111)");
@@ -108,6 +107,7 @@ public class DatabaseCreator {
 					"	Volume int NOT NULL,\r\n" + 
 					"	Edition int NOT NULL,\r\n" + 
 					"	Month varchar(255),\r\n" + 
+					"	Published boolean,\r\n" + 
 					"	PRIMARY KEY (ISSN, Volume, Edition),\r\n" + 
 					"	FOREIGN KEY (ISSN, Volume) REFERENCES volume(ISSN, Volume));";
 			//stmt.executeUpdate(str);
