@@ -98,7 +98,7 @@ public class ReviewerTasks {
 				ex.printStackTrace();
 			}
 		}
-		return null;
+		return new ArrayList<Submission>();
 	}
 	
 	/**
