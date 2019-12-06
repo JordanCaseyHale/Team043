@@ -31,12 +31,11 @@ public class JournalList {
 		MySQLConnection.closeConnection(con);
 		return null;
 		*/
-		String str = "SELECT Title, ISSN FROM journal";
 		List<Journal> journals = new ArrayList<Journal>();
 		Journal temp = new Journal();
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT Title, ISSN FROM journal");
+			ResultSet results = pstmt.executeQuery();
 			while (results.next()){
 				temp = new Journal();
 				temp.setTitle(results.getString(1));
@@ -71,11 +70,11 @@ public class JournalList {
 		MySQLConnection.closeConnection(con);
 		return null;
 		*/
-		String str = String.format("SELECT Year, Volume FROM volume WHERE ISSN = '%s'",journal);
 		List<Volume> volumes = new ArrayList<Volume>();
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT Year, Volume FROM volume WHERE ISSN = ?");
+			pstmt.setString(1, journal);
+			ResultSet results = pstmt.executeQuery();
 			while (results.next()) {
 				Volume tmp = new Volume();
 				tmp.setYear(results.getInt(1));
@@ -107,11 +106,12 @@ public class JournalList {
 		MySQLConnection.closeConnection(con);
 		return null;
 		*/
-		String str = String.format("SELECT Edition, Month FROM edition WHERE ISSN = '%s' AND Volume = %2d",journal, volume);
 		List<Edition> editions = new ArrayList<Edition>();
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT Edition, Month FROM edition WHERE ISSN = ? AND Volume = ?");
+			pstmt.setString(1, journal);
+			pstmt.setInt(2, volume);
+			ResultSet results = pstmt.executeQuery();
 			while (results.next()) {
 				Edition tmp = new Edition();
 				tmp.setEdition(results.getInt(1));
@@ -144,8 +144,11 @@ public class JournalList {
 		*/
 		String str = String.format("SELECT Title, PageRange FROM article WHERE ISSN = '%s' AND Volume = %2d AND Edition = %s",journal, volume, edition);
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT Title, PageRange FROM article WHERE ISSN = ? AND Volume = ? AND Edition = ?");
+			pstmt.setString(1, journal);
+			pstmt.setInt(2,volume);
+			pstmt.setInt(3, edition);
+			ResultSet results = pstmt.executeQuery();
 			List<String> articles = new ArrayList<String>();
 			int count = 0;
 			while (results.next()) {
@@ -201,10 +204,13 @@ public class JournalList {
 		MySQLConnection.closeConnection(con);
 		return null;
 		*/
-		String str = String.format("SELECT * FROM article WHERE ISSN = '%s' AND Volume = %2d AND Edition = %2d AND PageRange = '%s'",journal, volume, edition, pageRange);
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			Statement stmt = con.createStatement();
-			ResultSet results = stmt.executeQuery(str);
+			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM article WHERE ISSN = ? AND Volume = ? AND Edition = ? AND PageRange = ?");
+			pstmt.setString(1, journal);
+			pstmt.setInt(2, volume);
+			pstmt.setInt(3, edition);
+			pstmt.setString(4, pageRange);
+			ResultSet results = pstmt.executeQuery();
 			ResultSet idResults, resResults;
 			Article article = new Article();
 			int authorID = 0;
@@ -221,15 +227,17 @@ public class JournalList {
 				//article.setRespondName(results.getString(9));
 				//article.setRespondEmail(results.getString(10));
 			}
-			str = String.format("SELECT AuthorID FROM articleAuthors WHERE ArticleID = %2d",article.getArticleID());
-			idResults = stmt.executeQuery(str);
+			pstmt = con.prepareStatement("SELECT AuthorID FROM articleAuthors WHERE ArticleID = ?");
+			pstmt.setInt(1, article.getArticleID());
+			idResults = pstmt.executeQuery();
 			while (idResults.next()) {
 				authorID = idResults.getInt(1);
 			}
 			System.out.println(authorID);
 			
-			str = String.format("SELECT * FROM author WHERE AuthorID = %2d",authorID);
-			resResults = stmt.executeQuery(str);
+			pstmt = con.prepareStatement("SELECT * FROM author WHERE AuthorID = ?");
+			pstmt.setInt(1, authorID);
+			resResults = pstmt.executeQuery();
 			while (resResults.next()) {
 				if (resResults.getString(5) != null) {
 					article.setRespondName(resResults.getString(2)+", "+resResults.getString(3)+" "+resResults.getString(4));
@@ -238,9 +246,10 @@ public class JournalList {
 			}
 			System.out.println(article.getRespondEmail());
 			System.out.println(article.getRespondName());
-			str = String.format("SELECT Title, Forename, Surname FROM author WHERE AuthorID = %2d AND Email = null",authorID);
+			pstmt = con.prepareStatement("SELECT Title, Forename, Surname FROM author WHERE AuthorID = ? AND Email = null");
+			pstmt.setInt(1, authorID);
 			List<Author> coAuthors = new ArrayList<Author>();
-			ResultSet authorResult = stmt.executeQuery(str);
+			ResultSet authorResult = pstmt.executeQuery();
 			while (authorResult.next()) {
 				Author temp = new Author();
 				temp.setTitle(authorResult.getString(1));

@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class ReviewerTasksPanel extends JPanel {
-	public ReviewerTasksPanel() {
+	public ReviewerTasksPanel(String email) {
 		
 		//Check to see if has credentials here
         this.setLayout(new BorderLayout());
@@ -81,6 +81,13 @@ public class ReviewerTasksPanel extends JPanel {
         
         articleData.add(selectedJournalListScrollPane, constraints);  
         this.add(articleData,BorderLayout.SOUTH); 
+        
+        ArrayList<Integer> subids = AuthorTasks.getSubIDs(email);
+        for(int i : subids) {
+        	Submission s = Submission.getSubmissionByID(i);
+        	submissions.add(s);
+        };
+        
     }
 	protected JLabel labelTopMessage = new JLabel("Welcome, ");
 	

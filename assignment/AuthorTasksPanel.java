@@ -110,7 +110,7 @@ public class AuthorTasksPanel extends JPanel {
         mainPanel.add(journalListScrollPane,BorderLayout.EAST);
         
         //only show when having reviewer privileges
-        ReviewerTasksPanel rp = new ReviewerTasksPanel();
+        ReviewerTasksPanel rp = new ReviewerTasksPanel(email);
         rp.addListeners();
         tabbedPane.addTab("Reviewer", null, rp, "See Reviewer Tasks");        
     }

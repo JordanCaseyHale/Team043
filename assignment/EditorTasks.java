@@ -45,6 +45,22 @@ public class EditorTasks {
 		return verdicts;
 	}
 	
+	public static List<Edition> getUnpublishedEditions() {
+		List<Edition> eds = new ArrayList<Edition>();
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT * FROM edition WHERE Published = 0");
+			ResultSet results = pstmt.executeQuery();
+			while (results.next()) {
+				Edition ed = new Edition();
+				ed.setISSN(results.getString(1));
+				ed.setVolume(results.getInt(2));
+				ed.setEdition(results.getInt(3));
+				eds.add(ed);
+			}
+		} catch (SQLException ex) {ex.printStackTrace();}
+		return eds;
+	}
+	
 	public static void appointEditor() {
 		
 	}

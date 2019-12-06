@@ -19,8 +19,18 @@ public class PasswordHash {
 	}
 	
 	public static String checkInput(String query) {
+		query = query.toUpperCase();
 		if(query.contains(";")) {
 			query = query.substring(0,query.indexOf(';'));
+		}
+		if(query.contains("DROP TABLE")) {
+			query = query.substring(0,query.indexOf("DROP TABLE"));
+		}
+		if(query.contains("DELETE FROM")) {
+			query = query.substring(0,query.indexOf("DELETE FROM"));
+		}
+		if(query.contains("INSERT INTO")) {
+			query = query.substring(0,query.indexOf("INSERT INTO"));
 		}
 		return query;
 	}

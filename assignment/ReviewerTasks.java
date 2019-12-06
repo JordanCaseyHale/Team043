@@ -1,12 +1,13 @@
 package assignment;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ReviewerTasks {
 	/**
 	 * Gets the possible articles for a reviewer to choose from
 	 */
-	public static void getReviewsList(String author) {
+	public static ArrayList<Integer> getReviewsList(String author) {
 		//only show review list if the reviewer needs to select more to review
 		//otherwise should not have access to other submissions so dont show the list
 		
@@ -36,18 +37,37 @@ public class ReviewerTasks {
 				ResultSet results = pstmt.executeQuery();
 				String affil = results.getString(1);
 				//the ?? means idk what data to return and display
-				pstmt = con.prepareStatement("SELECT ?? FROM submission WHERE account.Affiliation != ? AND subbmisionAuthors.Email = account.Email");
+				pstmt = con.prepareStatement("SELECT SubID FROM submission WHERE account.Affiliation != ? AND subbmisionAuthors.Email = account.Email");
 				pstmt.setString(1, affil);
 				results = pstmt.executeQuery();
+				ArrayList<Integer> ids = new ArrayList<Integer>();
 				while(results.next()) {
-					//output list
+					ids.add(results.getInt(1));
 				}
+				return ids;
 			}
 			catch (SQLException ex){
 				ex.printStackTrace();
 			}
 		}
+		return null;
 		
+	}
+	
+	public static void submitChosenSubmission(int revID, ArrayList<Integer> subIDs) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+			PreparedStatement pstmt;
+			for(Integer i : subIDs) {
+				pstmt = con.prepareStatement("INSERT INTO reviews (RevID, SubID) VALUES (?, ?)");
+				pstmt.setInt(1, revID);
+				pstmt.setInt(2, i);
+				pstmt.executeUpdate();
+			}
+			
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
 	}
 	
 	/**
