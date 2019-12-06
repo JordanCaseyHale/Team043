@@ -159,6 +159,10 @@ public class ReviewerTasksPanel extends JPanel {
  					labelArticleName.setText("Article: " + selected.getName());
  					labelISSN.setText("ISSN: " + selected.getJournal());
  					textPanePDFLink.setText(selected.getPdfLink());
+ 					Submission sub = alreadySelected.get(selectedJournalList.getSelectedIndex());
+ 					buttonReview.setEnabled(!ReviewerTasks.reviewExists(ReviewerTasks.getReviewerID(email),sub.getSubID()));
+ 					buttonFinalVerdict.setEnabled(ReviewerTasks.canPutFinalVerdict(ReviewerTasks.getReviewerID(email),sub.getSubID()));
+ 					
  				}	
  			}
  		});

@@ -174,6 +174,40 @@ public class ReviewerTasks {
 			ex.printStackTrace();
 		}
 	}
+	
+	public static boolean canPutFinalVerdict(int revID,int subID) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT Response,Verdict FROM reviews WHERE (SubID,RevID) =  (?,?)");
+			pstmt.setInt(1, subID);
+			pstmt.setInt(2, revID);
+			ResultSet results = pstmt.executeQuery();
+			if (results.first()) {
+				return results.getString(1) != null && results.getString(2) == null;
+			}
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static boolean reviewExists(int revID,int subID) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT Initial_verdict FROM reviews WHERE (SubID,RevID) =  (?,?)");
+			pstmt.setInt(1, subID);
+			pstmt.setInt(2, revID);
+			ResultSet results = pstmt.executeQuery();
+			
+			if (results.first()) {
+				return results.getString(1) != null;
+			}
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
 	/**
 	 * Checks if all reviews by given revID are in the final stage (final verdicts commited)
 	 * @param revID
