@@ -24,6 +24,7 @@ public class ChangePasswordDialog extends JDialog {
 	
 	public ChangePasswordDialog(String email) {
 		this.email = email;
+		
 		JPanel pane = new JPanel(new GridBagLayout());
 		this.setLayout(new BorderLayout());
 		this.setPreferredSize(new Dimension (500,400));

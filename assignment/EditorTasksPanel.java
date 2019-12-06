@@ -27,7 +27,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class EditorTasksPanel extends JPanel {
 	
-	private static String email;
+	private String email;
 	
 	public EditorTasksPanel(String email) {
 		this.email = email;
@@ -39,8 +39,7 @@ public class EditorTasksPanel extends JPanel {
         topButtons.add(buttonLogout);
         topButtons.add(buttonResetPassword);
         topButtons.add(buttonAddEditor);
-        topButtons.add(buttonManageChiefRole);
-        topButtons.add(buttonRetire);
+        topButtons.add(buttonManageRoles);
         this.add(topButtons,BorderLayout.NORTH);
         
 		editionList = new JList<String>();
@@ -135,10 +134,9 @@ public class EditorTasksPanel extends JPanel {
     protected JButton buttonLogout = new JButton("Log Out");
     protected JButton buttonResetPassword = new JButton("Change Password");
     protected JButton buttonAddEditor = new JButton("Add New Editor");
-    protected JButton buttonManageChiefRole = new JButton("Manage Chief Roles");
-    protected JButton buttonRetire = new JButton("Retire");
-    protected JButton buttonAddToEdition = new JButton("Add Article to Edition");
     protected JButton buttonReject = new JButton("Reject");
+    protected JButton buttonAddToEdition = new JButton("Add Article to Edition");
+    protected JButton buttonManageRoles = new JButton("Manage Roles");
     protected JButton buttonAddEditionToJournal = new JButton("Add Edition to Journal");
     
     protected JList<String> submissionList;
@@ -149,17 +147,21 @@ public class EditorTasksPanel extends JPanel {
 	private DefaultListModel<String> listEditionModel = new DefaultListModel<>();
 	private List<Edition> eds = EditorTasks.getUnpublishedEditions();
     
+	public void logout() {
+		buttonLogout.doClick();
+	}
+	
     public void addListeners(JFrame parent) {
     	buttonLogout.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			EditorTasksPanel.email = null;
+    			email = null;
     			//go to main panel
     			parent.getContentPane().removeAll();
-        		MainPanel nextPanel = new MainPanel();
-        		nextPanel.addListeners(parent);
-        		parent.getContentPane().add(nextPanel);
-        		parent.revalidate(); 
-        		parent.repaint();
+    			MainPanel nextPanel = new MainPanel();
+    			nextPanel.addListeners(parent);
+    			parent.getContentPane().add(nextPanel);
+    			parent.revalidate(); 
+    			parent.repaint();
     		}
     	});
     	//JList listener
@@ -215,7 +217,7 @@ public class EditorTasksPanel extends JPanel {
     		public void actionPerformed(ActionEvent e) {
     			if (!submissionList.isSelectionEmpty()) {
     				String subValue = submissionList.getSelectedValue();
-    				String subID = subValue.split(" - ")[2].split(",")[0].trim();
+    				int subID = Integer.parseInt(subValue.split(" - ")[2].split(",")[0].trim());
     				EditorTasks.rejectSubmission(subID);
     			}
     		}
@@ -230,13 +232,13 @@ public class EditorTasksPanel extends JPanel {
     					int editionSel = Integer.parseInt(edValue.split("Edition: ")[1].trim());
     					int volumeSel = Integer.parseInt(edValue.split(", ")[1].replaceAll("Volume: ", "").trim());
     					String issnSel = edValue.split(", ")[0].replaceAll("ISSN: ", "").trim();
-    					String subID = subValue.split(" - ")[2].split(",")[0].trim();
+    					int subID = Integer.parseInt(subValue.split(" - ")[2].split(",")[0].trim());
     					String subISSN = subValue.split(" ")[1].trim();
     					System.out.println("issnSel = "+issnSel);
     					System.out.println("subISSN = "+subISSN);
     					//get sub issn
     					//if match edition issn then
-    					if (subID.contentEquals(subISSN)) {
+    					if (issnSel.contentEquals(subISSN)) {
     						EditorTasks.publishArticle(subID, issnSel, volumeSel, editionSel);
     					}
     				}
@@ -253,30 +255,33 @@ public class EditorTasksPanel extends JPanel {
     			//submitted edition
     			if (!editionList.isSelectionEmpty()) {
     				String valueSelected = editionList.getSelectedValue();
-    				EditorTasks.publishEdition(valueSelected);
+    				//EditorTasks.publishEdition(valueSelected, , );
     			}
     		}
     	});
-    	
-    	buttonManageChiefRole.addActionListener(new ActionListener() {
+    	EditorTasksPanel etp = this;
+    	buttonManageRoles.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			//create dialog to give other editor chief role
-    			
-    		}
-    	});
-    	
-    	buttonRetire.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    			
+    			RetireDialog rd = new RetireDialog(email, etp);
+    			rd.AddListeners();
+    			rd.setVisible(true);
     		}
     	});
     	
     	buttonResetPassword.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			System.out.println(EditorTasksPanel.email);
-    			ChangePasswordDialog cpd = new ChangePasswordDialog(EditorTasksPanel.email);
+    			System.out.println(email);
+    			ChangePasswordDialog cpd = new ChangePasswordDialog(email);
     			cpd.AddListeners();
     			cpd.setVisible(true);
+    		}
+    	});
+    	
+    	buttonAddEditor.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			AddEditorDialog aed = new AddEditorDialog();
+    			aed.AddListeners();
+    			aed.setVisible(true);
     		}
     	});
     }

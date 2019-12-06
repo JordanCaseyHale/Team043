@@ -108,7 +108,7 @@ public class JournalList {
 		*/
 		List<Edition> editions = new ArrayList<Edition>();
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("SELECT Edition, Month FROM edition WHERE ISSN = ? AND Volume = ?");
+			PreparedStatement pstmt = con.prepareStatement("SELECT Edition, Month FROM edition WHERE ISSN = ? AND Volume = ? AND Published = 1");
 			pstmt.setString(1, journal);
 			pstmt.setInt(2, volume);
 			ResultSet results = pstmt.executeQuery();
