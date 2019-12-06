@@ -156,7 +156,7 @@ public class AuthorTasks {
 	 */
 	public static void submitReviewResponse(String response, int subID, int revID) {
 		//SQL statement to add response to database
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET Response = ? WHERE (SubID,RevID) = (?,?)");
 			pstmt.setString(1,response);
 			pstmt.setInt(2, subID);

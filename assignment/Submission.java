@@ -53,11 +53,12 @@ public class Submission {
 				coauths.add(a);
 			}
 			
-			PreparedStatement revIDpstmt = con.prepareStatement("SELECT RevID,Initial_verdict,Verdict FROM reviews WHERE SubID = ?");
+			PreparedStatement revIDpstmt = con.prepareStatement("SELECT RevID,Initial_verdict,Verdict,Response FROM reviews WHERE SubID = ?");
 			revIDpstmt.setInt(1, subID);
 			int[] revIDs = new int[3];
 			String[] initVers  = new String[3];
 			String[] vers = new String[3];
+			String[] resps = new String[3];
 			int count = 0;
 			ResultSet revIDresult = revIDpstmt.executeQuery();
 			while (revIDresult.next()){
@@ -65,6 +66,7 @@ public class Submission {
 					revIDs[count] = revIDresult.getInt(1);
 					initVers[count] = revIDresult.getString(2);
 					vers[count] = revIDresult.getString(3);
+					resps[count] = revIDresult.getString(4);
 					count++;
 				}
 			}			
@@ -78,6 +80,7 @@ public class Submission {
 				returnedSub.setReviews(revIDs);
 				returnedSub.setInitVerdicts(initVers);
 				returnedSub.setVerdicts(vers);
+				returnedSub.setResponses(resps);
 			}
 			
 		}
