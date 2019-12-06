@@ -103,7 +103,7 @@ public class EditorTasksPanel extends JPanel {
         this.add(journalListScrollPane,BorderLayout.EAST);
         
 		for (Submission s : subs) {
-			listModel.addElement("ISSN: "+s.getJournal()+" - "+s.getSubID()+", "+s.getName());
+			listModel.addElement("ISSN: "+s.getJournal()+" subID: "+s.getSubID()+", "+s.getName());
 		}
 		submissionList.setModel(listModel);
 		
@@ -217,8 +217,14 @@ public class EditorTasksPanel extends JPanel {
     		public void actionPerformed(ActionEvent e) {
     			if (!submissionList.isSelectionEmpty()) {
     				String subValue = submissionList.getSelectedValue();
-    				int subID = Integer.parseInt(subValue.split(" - ")[2].split(",")[0].trim());
+    				int subID = Integer.parseInt(subValue.split(" subID: ")[1].split(",")[0].trim());
     				EditorTasks.rejectSubmission(subID);
+    				listModel.clear();
+    				subs = EditorTasks.getSubmissions();
+    				for (Submission s : subs) {
+    					listModel.addElement("ISSN: "+s.getJournal()+" subID: "+s.getSubID()+", "+s.getName());
+    				}
+    				submissionList.setModel(listModel);
     			}
     		}
     	});
@@ -232,7 +238,7 @@ public class EditorTasksPanel extends JPanel {
     					int editionSel = Integer.parseInt(edValue.split("Edition: ")[1].trim());
     					int volumeSel = Integer.parseInt(edValue.split(", ")[1].replaceAll("Volume: ", "").trim());
     					String issnSel = edValue.split(", ")[0].replaceAll("ISSN: ", "").trim();
-    					int subID = Integer.parseInt(subValue.split(" - ")[2].split(",")[0].trim());
+    					int subID = Integer.parseInt(subValue.split(" subID: ")[1].split(",")[0].trim());
     					String subISSN = subValue.split(" ")[1].trim();
     					System.out.println("issnSel = "+issnSel);
     					System.out.println("subISSN = "+subISSN);
@@ -241,6 +247,12 @@ public class EditorTasksPanel extends JPanel {
     					if (issnSel.contentEquals(subISSN)) {
     						EditorTasks.publishArticle(subID, issnSel, volumeSel, editionSel);
     					}
+        				listModel.clear();
+        				subs = EditorTasks.getSubmissions();
+        				for (Submission s : subs) {
+        					listModel.addElement("ISSN: "+s.getJournal()+" subID: "+s.getSubID()+", "+s.getName());
+        				}
+        				submissionList.setModel(listModel);
     				}
     			}
     			//get info on article
@@ -255,7 +267,7 @@ public class EditorTasksPanel extends JPanel {
     			//submitted edition
     			if (!editionList.isSelectionEmpty()) {
     				String valueSelected = editionList.getSelectedValue();
-    				//EditorTasks.publishEdition(valueSelected, , );
+    				EditorTasks.publishEdition(valueSelected, , );
     			}
     		}
     	});

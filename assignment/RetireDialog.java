@@ -33,7 +33,7 @@ public class RetireDialog extends JDialog {
 		
 		JPanel panel = new JPanel(new GridBagLayout());
 		this.setLayout(new BorderLayout());
-		this.setPreferredSize(new Dimension (500,400));
+		this.setPreferredSize(new Dimension (500,600));
 		GridBagConstraints constraints = new GridBagConstraints();
 		
 		constraints.anchor = GridBagConstraints.WEST;
@@ -56,11 +56,16 @@ public class RetireDialog extends JDialog {
 		}
 		panel.add(comboBoxJournals, constraints);
 		constraints.gridx = 1;
-		List<Editor> editors = EditorTasks.getEditors(journals.get(0).getISSN(), this.email);
-		for (Editor e : editors) {
-			editorsComboBoxModel.addElement(e.getTitle()+", "+e.getForename()+" "+e.getSurname()+" - "+e.getEmail());
+		System.out.println(journals.size());
+		if (journals.size() > 0) {
+			System.out.println("Editors:");
+			List<Editor> editors = EditorTasks.getEditors(journals.get(0).getISSN(), this.email);
+			System.out.println(editors);
+			for (Editor e : editors) {
+				editorsComboBoxModel.addElement(e.getTitle()+", "+e.getForename()+" "+e.getSurname()+" Email: "+e.getEmail());
+			}
+			comboBoxEditors.setModel(editorsComboBoxModel);
 		}
-		comboBoxEditors.setModel(editorsComboBoxModel);
 		panel.add(comboBoxEditors, constraints);
 		constraints.gridy = 1;
 		panel.add(buttonMakeChief, constraints);
@@ -94,12 +99,14 @@ public class RetireDialog extends JDialog {
 					else {
 						buttonDelete.setEnabled(false);
 					}
-					List<Editor> editors = EditorTasks.getEditors(journals.get(0).getISSN(), email);
+					String journalISSN = ((String) comboBoxJournals.getSelectedItem()).split(", ")[0].replaceAll("ISSN: ", "").trim();
+					List<Editor> editors = EditorTasks.getEditors(journalISSN, email);
 					for (Editor ed : editors) {
 						editorsComboBoxModel.addElement(ed.getTitle()+", "+ed.getForename()+" "+ed.getSurname()+", Email: "+ed.getEmail());
 					}
 					comboBoxEditors.setModel(editorsComboBoxModel);
 				}
+				dispose();
 			}
 		});
 		

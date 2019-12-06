@@ -16,6 +16,7 @@ public class MainHandler extends JFrame {
 		mainFrame.setPreferredSize(new Dimension(800, 600));
 		mainFrame.setLayout(new BorderLayout());
 		mainFrame.add(introPanel, BorderLayout.CENTER);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		introPanel.addListeners(mainFrame);
 		mainFrame.pack();
 		mainFrame.setVisible(true);

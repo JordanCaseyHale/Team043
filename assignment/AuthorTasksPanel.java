@@ -18,7 +18,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class AuthorTasksPanel extends JPanel {
 	public AuthorTasksPanel(String email) {
-		
+		this.email = email;
 		//Check to see if has credentials here
 		JTabbedPane tabbedPane = new JTabbedPane();
         this.setLayout(new BorderLayout());
@@ -141,8 +141,10 @@ public class AuthorTasksPanel extends JPanel {
     
     protected JList<String> journalList;
     protected ArrayList<Submission> submissions = new ArrayList<Submission>();
+    protected String email;
     
     public void addListeners(JFrame parent) {
+    	parent.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	AuthorTasksPanel parentSubPanel = this;
     	journalList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -253,6 +255,14 @@ public class AuthorTasksPanel extends JPanel {
 	            	dlg.addListeners(parentSubPanel);
 	            	dlg.setVisible(true);
 				}
+    		}
+    	});
+    	
+    	buttonResetPassword.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+				ChangePasswordDialog cpd = new ChangePasswordDialog(email);
+				cpd.AddListeners();
+				cpd.setVisible(true);
     		}
     	});
     }

@@ -56,8 +56,26 @@ public class DatabaseCreator {
 			stmt.executeUpdate("INSERT INTO articleAuthors VALUES (321, 111)");
 			
 			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestAuthor@aol.com', 'Dr', 'John', 'Smith', 'University of Sheffield', '%s')",PasswordHash.getHashedString("password")));
-			stmt.executeUpdate("INSERT INTO submission VALUES (123, 'Title test', 'Abstract test', 'pdf link', '2019-0001', 'TestAuthor@aol.com')");
-			stmt.executeUpdate("INSERT INTO submissionAuthors VALUES ('TestAuthor@aol.com', 123)");
+			*/
+			/*
+			stmt.executeUpdate("INSERT INTO submission VALUES (1235, 'Submit test', 'Abstract test', 'pdf link', '2019-0001', 'TestAuthor@aol.com')");
+			stmt.executeUpdate("INSERT INTO submissionAuthors VALUES ('TestAuthor@aol.com', 1235)");
+			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestReview1@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s')",PasswordHash.getHashedString("password")));
+			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestReview2@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s')",PasswordHash.getHashedString("password")));
+			stmt.executeUpdate(String.format("INSERT INTO account VALUES ('TestReview3@aol.com', 'Dr', 'Ed', 'Tor', 'University of Sheffield', '%s')",PasswordHash.getHashedString("password")));
+			stmt.executeUpdate("INSERT INTO reviewers VALUES (1, 'TestReview1@aol.com', 0)");
+			stmt.executeUpdate("INSERT INTO reviewers VALUES (2, 'TestReview2@aol.com', 0)");
+			stmt.executeUpdate("INSERT INTO reviewers VALUES (3, 'TestReview3@aol.com', 0)");
+			stmt.executeUpdate("INSERT INTO reviews VALUES (1235, 1, 'Strong Accept', 'review 1', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
+			stmt.executeUpdate("INSERT INTO reviews VALUES (1235, 2, 'Strong Accept', 'review 2', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
+			stmt.executeUpdate("INSERT INTO reviews VALUES (1235, 3, 'Strong Accept', 'review 3', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
+			
+			stmt.executeUpdate("INSERT INTO submission VALUES (1234, 'Reject test', 'Abstract test', 'pdf link', '2019-0001', 'TestAuthor@aol.com')");
+			stmt.executeUpdate("INSERT INTO submissionAuthors VALUES ('TestAuthor@aol.com', 1234)");
+			
+			stmt.executeUpdate("INSERT INTO reviews VALUES (1234, 1, 'Strong Accept', 'review 1', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
+			stmt.executeUpdate("INSERT INTO reviews VALUES (1234, 2, 'Strong Accept', 'review 2', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
+			stmt.executeUpdate("INSERT INTO reviews VALUES (1234, 3, 'Strong Accept', 'review 3', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
 			*/
 			//stmt.executeUpdate("INSERT INTO reviewers VALUES (42, 'TestAuthor@aol.com', 2)");
 			/*ResultSet results = stmt.executeQuery("SELECT column_name FROM information_schema.COLUMNS WHERE table_name LIKE 'reviews'");
@@ -65,6 +83,14 @@ public class DatabaseCreator {
 				System.out.println(results.getString(1));
 			}*/
 			//stmt.executeUpdate("INSERT INTO reviews VALUES (123, 42, 'Strong Accept', 'summary text here', 'typos text here', 'criticisms text here', 'response text here', 'Strong Accept')");
+			
+			//ResultSet results = stmt.executeQuery("SELECT * FROM journalEditors");
+			/*
+			while (results.next()) {
+				System.out.println(results.getString(1));
+				System.out.println(results.getString(2));
+			}
+			*/
 			System.out.println("end");
 		} catch (SQLException ex) {ex.printStackTrace();}
 	}

@@ -30,6 +30,8 @@ public class AddEditorDialog extends JDialog {
 	protected JButton buttonCreate = new JButton("Create Editor");
 	protected JButton buttonCancel = new JButton("Cancel");
 	
+	protected boolean added = false;
+	
 	public AddEditorDialog() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		this.setLayout(new BorderLayout());
@@ -89,15 +91,18 @@ public class AddEditorDialog extends JDialog {
 		
 		buttonCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean create = true;
-				String email = textEmail.getText();
-				String title = textTitle.getText();
-				String forename = textForename.getText();
-				String surname = textSurname.getText();
-				String affiliation = textAffiliation.getText();
-				String password = textPassword.getText().trim();
-				String issn = textISSN.getText();
-				EditorTasks.makeEditor(email, title, forename, surname, affiliation, password, issn);
+				if (!added) {
+					String email = textEmail.getText();
+					String title = textTitle.getText();
+					String forename = textForename.getText();
+					String surname = textSurname.getText();
+					String affiliation = textAffiliation.getText();
+					String password = textPassword.getText().trim();
+					String issn = textISSN.getText();
+					added = true;
+					EditorTasks.makeEditor(email, title, forename, surname, affiliation, password, issn);
+					dispose();
+				}
 			}
 		});
 	}

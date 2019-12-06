@@ -132,7 +132,7 @@ public class ReviewerTasks {
 			pstmt.setInt(1, RevID);
 			pstmt.setInt(2, subID);
 			pstmt.executeUpdate();			
-			checkLast(RevID);
+			incrementReviews(RevID);
 		}
 		catch (SQLException ex){
 			ex.printStackTrace();
@@ -157,27 +157,17 @@ public class ReviewerTasks {
 			ex.printStackTrace();
 		}
 	}
-	
-	public static void getResponses() {
-		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("SELECT Response FROM reviews WHERE RevID = ? SubID = ?");
-			ResultSet result = pstmt.executeQuery();
-			while(result.next()) {
-				//output reponses
-			}
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-		}
-		
-	}
-	
-	public static void submitFinalVerdict() {
+
+	public static void submitFinalVerdict(String verdict,int SubID,int RevID) {
 		//SQL submitting final verdict
 		//If last review then removeReviewer
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET FinalVerdict = ? WHERE RevID = ? AND SubID =  ?");
+			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET FinalVerdict = ? WHERE (SubID,RevID) =  (?,?)");
+			pstmt.setString(1, verdict);
+			pstmt.setInt(2, SubID);
+			pstmt.setInt(3, RevID);
 			pstmt.executeUpdate();
+			ReviewerTasks.checkLast(RevID);
 			//checkLast();
 		}
 		catch (SQLException ex){
@@ -185,10 +175,34 @@ public class ReviewerTasks {
 		}
 	}
 	/**
-	 * Subtracts one from RemainingReviews and accordingly changes values around
+	 * Checks if all reviews by given revID are in the final stage (final verdicts commited)
 	 * @param revID
 	 */
 	public static void checkLast(int revID) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT Verdict FROM reviews WHERE RevID = ?");
+			pstmt.setInt(1, revID);
+			ResultSet results = pstmt.executeQuery();
+			boolean stillLeft = false;
+			while (results.next()) {
+				if (results.getString(1) == null) {
+					stillLeft = true;
+				}
+			}
+			if(!stillLeft) {
+				removeReviewer(revID);
+			}
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Subtracts one from RemainingReviews and accordingly changes values around
+	 * @param revID
+	 */
+	public static void incrementReviews(int revID) {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("SELECT RemainingReviews FROM reviewers WHERE RevID = ?");
 			pstmt.setInt(1, revID);
@@ -197,8 +211,8 @@ public class ReviewerTasks {
 			if (results.first()) {
 				left = results.getInt(1);
 			}
-			if(left == 1) {
-				//removeReviewer();
+			if(left == 0) {
+				
 			}
 			else {
 				left -= 1;
@@ -213,9 +227,10 @@ public class ReviewerTasks {
 		}
 	}
 	
-	public static void removeReviewer() {
+	public static void removeReviewer(int RevID) {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 			PreparedStatement pstmt = con.prepareStatement("DELETE FROM reviewers WHERE RevID = ?");
+			pstmt.setInt(1, RevID);
 			pstmt.executeUpdate();
 			//checkLast();
 		}

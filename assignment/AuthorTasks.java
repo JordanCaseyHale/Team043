@@ -134,7 +134,7 @@ public class AuthorTasks {
 		//SQL statement to get article reviews
 		ArrayList<String> temp = new ArrayList<String>();
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("SELECT Summary,Typos,Criticisms FROM reviews WHERE (SubID,RevID) = (?,?)");
+			PreparedStatement pstmt = con.prepareStatement("SELECT Summary,Typos,Criticisms,Response FROM reviews WHERE (SubID,RevID) = (?,?)");
 			pstmt.setInt(1, subID);
 			pstmt.setInt(2, revID);
 			ResultSet results = pstmt.executeQuery();
@@ -142,6 +142,7 @@ public class AuthorTasks {
 				temp.add(results.getString(1));
 				temp.add(results.getString(2));
 				temp.add(results.getString(3));
+				temp.add(results.getString(4));
 				return temp;
 			}
 		} catch (SQLException ex) {ex.printStackTrace();}
@@ -156,7 +157,7 @@ public class AuthorTasks {
 	public static void submitReviewResponse(String response, int subID, int revID) {
 		//SQL statement to add response to database
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team0043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET response = ? WHERE (SubID,RevID) = (?,?)");
+			PreparedStatement pstmt = con.prepareStatement("UPDATE reviews SET Response = ? WHERE (SubID,RevID) = (?,?)");
 			pstmt.setString(1,response);
 			pstmt.setInt(2, subID);
 			pstmt.setInt(3,  revID);

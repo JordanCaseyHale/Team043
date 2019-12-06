@@ -84,8 +84,19 @@ public class EditorTasks {
 			pstmt.setString(1, issn);
 			pstmt.setString(2, email);
 			ResultSet results = pstmt.executeQuery();
+			ResultSet info;
 			while (results.next()) {
-				
+				Editor ed = new Editor();
+				ed.setEmail(results.getString(1));
+				pstmt = con.prepareStatement("SELECT Title, Forename, Surname FROM account WHERE Email = ?");
+				pstmt.setString(1, ed.getEmail());
+				info = pstmt.executeQuery();
+				if (info.first()) {
+					ed.setTitle(info.getString(1));
+					ed.setForename(info.getString(2));
+					ed.setSurname(info.getString(3));
+				}
+				editors.add(ed);
 			}
 		} catch (SQLException ex) {ex.printStackTrace();}
 		return editors;
@@ -94,7 +105,7 @@ public class EditorTasks {
 	public static void appointEditor(String email, String issn) {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 	
-			PreparedStatement pstmt = con.prepareStatement("INSERT INTO journalEditor VALUES (?, ?)");
+			PreparedStatement pstmt = con.prepareStatement("INSERT INTO journalEditors VALUES (?, ?)");
 			pstmt.setString(1, email);
 			pstmt.setString(2, issn);
 			pstmt.executeUpdate();
@@ -108,12 +119,8 @@ public class EditorTasks {
 	public static void makeEditor(String email, String title, String forename, String surname, String affiliation, String password, String issn) {
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
 
-			boolean newUser = AuthorTasks.createAccount(email, title, forename, surname, affiliation, password);
+			boolean newUser = AuthorTasks.createAccount(email, title, forename, surname, affiliation, PasswordHash.getHashedString(password));
 			appointEditor(email, issn);
-			PreparedStatement pstmt = con.prepareStatement("INSERT INTO journalEditor VALUES (?, ?)");	
-			pstmt.setString(1, email);
-			pstmt.setString(2, issn);
-			pstmt.executeUpdate();
 			
 			//For when a new editor without an existing user account is needed
 			//Call createAccount() from AuthorTasks.java
@@ -184,20 +191,26 @@ public class EditorTasks {
 			pstmt.setString(1, issn);
 			pstmt.setInt(2, subID);
 			ResultSet res = pstmt.executeQuery();
-
-			String title = res.getString(1);
-			String abstracts = res.getString(2);
-			String link = res.getString(3);
+			String title = null;
+			String abstracts = null;
+			String link = null;
+			if (res.first()) {
+				title = res.getString(1);
+				abstracts = res.getString(2);
+				link = res.getString(3);
+			}
 			String pageRange = "3-7";
 			
 			pstmt = con.prepareStatement("SELECT COUNT(*) FROM edition WHERE issn = ? AND volume = ?"); 
 			pstmt.setString(1, issn);
 			pstmt.setInt(2, volume);
 			ResultSet rs = pstmt.executeQuery();
-			
-			int editionContents = rs.getInt(1);
+			int editionContents = 0; 
+			if (rs.first()) {
+				editionContents = rs.getInt(1);
+			}
 			if (editionContents <8) {
-				pstmt = con.prepareStatement("INSERT (ISSN,Volume,Edition,PageRange,Title,Abstract,Link) INTO article VALUES (?, ?, ?, ?, ?, ?, ?)");
+				pstmt = con.prepareStatement("INSERT INTO article (ISSN,Volume,Edition,PageRange,Title,Abstract,Link) VALUES (?, ?, ?, ?, ?, ?, ?)");
 				pstmt.setString(1, issn);
 				pstmt.setInt(2, volume);
 				pstmt.setInt(3, edition);
@@ -210,16 +223,17 @@ public class EditorTasks {
 			//else call createEdition() function and add article to this new edition
 			else {
 				int editionNo = createEdition(issn, volume, edition+1, "Decemeber");
-				pstmt = con.prepareStatement("INSERT (ISSN,Volume,Edition,PageRange,Title,Abstract,Link) INTO article VALUES (?, ?, ?, ?, ?, ?, ?)");
-				pstmt.setString(2, issn);
-				pstmt.setInt(3, volume);
-				pstmt.setInt(4, editionNo);
-				pstmt.setString(5, "10");
-				pstmt.setString(6, title);
-				pstmt.setString(7, abstracts);
-				pstmt.setString(8, link);
+				pstmt = con.prepareStatement("INSERT INTO article (ISSN,Volume,Edition,PageRange,Title,Abstract,Link) VALUES (?, ?, ?, ?, ?, ?, ?)");
+				pstmt.setString(1, issn);
+				pstmt.setInt(2, volume);
+				pstmt.setInt(3, editionNo);
+				pstmt.setString(4, "10");
+				pstmt.setString(5, title);
+				pstmt.setString(6, abstracts);
+				pstmt.setString(7, link);
 				pstmt.executeUpdate();
 			}
+			rejectSubmission(subID);
 		}		
 		catch (SQLException ex){
 			ex.printStackTrace();
@@ -231,7 +245,13 @@ public class EditorTasks {
 		//deletes a submission from submission table
 		//assuming no related reviews to delete since submission is rejected before becoming an article?
 		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
-			PreparedStatement pstmt = con.prepareStatement("DELETE submission, reviews FROM submission INNER JOIN reviews WHERE subID = ?");
+			PreparedStatement pstmt = con.prepareStatement("DELETE FROM submissionAuthors WHERE SubID = ?");
+			pstmt.setInt(1, subID);
+			pstmt.executeUpdate();
+			pstmt = con.prepareStatement("DELETE FROM reviews WHERE SubID = ?");
+			pstmt.setInt(1, subID);
+			pstmt.executeUpdate();
+			pstmt = con.prepareStatement("DELETE FROM submission WHERE SubID = ?");
 			pstmt.setInt(1, subID);
 			pstmt.executeUpdate();
 		} 
@@ -314,7 +334,7 @@ public class EditorTasks {
 			PreparedStatement pstmt = con.prepareStatement("DELETE FROM journalEditors WHERE Email = ?");
 			pstmt.setString(1, email);
 			pstmt.executeUpdate();
-			pstmt = con.prepareStatement("SELECT FROM submissionAuthors WHERE Email = ?");
+			pstmt = con.prepareStatement("SELECT * FROM submissionAuthors WHERE Email = ?");
 			pstmt.setString(1, email);
 			ResultSet results = pstmt.executeQuery();
 			if (!results.first()) {

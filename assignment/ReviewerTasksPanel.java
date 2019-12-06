@@ -71,7 +71,10 @@ public class ReviewerTasksPanel extends JPanel {
         constraints.gridx = 0;
         constraints.gridwidth = 1;
         articleData.add(buttonReview, constraints);       
-        
+        constraints.weightx = 0.3;
+        constraints.gridx = 1;
+        constraints.gridwidth = 1;
+        articleData.add(buttonFinalVerdict, constraints);
         
         selectedJournalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectedJournalList.setLayoutOrientation(JList.VERTICAL);
@@ -116,6 +119,8 @@ public class ReviewerTasksPanel extends JPanel {
     protected JTextPane textPanePDFLink = new JTextPane();
     
     protected JButton buttonReview = new JButton("Make Review");
+
+    protected JButton buttonFinalVerdict = new JButton("Make Final Verdict");
     
     protected JButton buttonLogout = new JButton("Log Out");
     protected JButton buttonResetPassword = new JButton("Change Password");
@@ -166,10 +171,20 @@ public class ReviewerTasksPanel extends JPanel {
              	System.out.print("make panel");
              }
     	 });
-    	 
+    	 buttonFinalVerdict.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+            	Submission selected = alreadySelected.get(selectedJournalList.getSelectedIndex());
+            	ViewResponsesDialog dlg = new ViewResponsesDialog(selected.getSubID(),ReviewerTasks.getReviewerID(email));
+             	dlg.addListeners(parentRevPanel);
+             	dlg.setVisible(true);
+             	System.out.print("make panel");
+             }
+    	 });
     	 buttonResetPassword.addActionListener(new ActionListener() {
     		 public void actionPerformed(ActionEvent e) {
-    			 
+    			 ChangePasswordDialog cpd = new ChangePasswordDialog(email);
+    			 cpd.AddListeners();
+    			 cpd.setVisible(true);
     		 }
     	 });
     	 buttonLogout.addActionListener(new ActionListener() {

@@ -98,6 +98,7 @@ public class MainPanel extends JPanel {
     protected DefaultListModel<String> listModel = new DefaultListModel<>();
     
     public void addListeners(JFrame parent) {
+    	
         buttonNewAuthor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	parent.getContentPane().removeAll();

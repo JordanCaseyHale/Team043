@@ -90,14 +90,11 @@ public class LoginPanel extends JPanel {
             		userType = "Editor";
             	}
             	
-            	//email = MySQLConnection.checkInput(email);
-            	System.out.println(email+" "+" "+password+" "+PasswordHash.getHashedString(password)+" "+userType);
-            	
             	boolean succ = Main.login(email, PasswordHash.getHashedString(password), userType);
+            	
             	if (succ) {
             		//go to relevant page
             		if (userType == "Author") {
-            			System.out.println("succ");
                 		parent.getContentPane().removeAll();
                 		AuthorTasksPanel nextPanel = new AuthorTasksPanel(email);
                 		nextPanel.addListeners(parent);
@@ -106,7 +103,6 @@ public class LoginPanel extends JPanel {
                 		parent.repaint();
             		}
             		else {
-            			System.out.println("succ");
                 		parent.getContentPane().removeAll();
                 		EditorTasksPanel nextPanel = new EditorTasksPanel(email);
                 		nextPanel.addListeners(parent);
@@ -117,7 +113,6 @@ public class LoginPanel extends JPanel {
             	}
             	else {
             		//Display error message
-            		System.out.println("not succ");
             		System.out.println("not succ");
             		
             	}
