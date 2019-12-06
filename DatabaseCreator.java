@@ -1,6 +1,4 @@
 import java.sql.*;
-
-import assignment.MySQLConnection;
 import assignment.PasswordHash;
 
 public class DatabaseCreator {
