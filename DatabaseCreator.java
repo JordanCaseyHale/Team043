@@ -1,8 +1,4 @@
 import java.sql.*;
-<<<<<<< HEAD
-=======
-
->>>>>>> 0f63519a6d589cb954b44d837bb6084288ac606d
 import assignment.PasswordHash;
 
 public class DatabaseCreator {
