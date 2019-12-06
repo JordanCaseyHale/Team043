@@ -68,6 +68,9 @@ public class AuthorTasksPanel extends JPanel {
         articleData.add(labelVerdict3, constraints);
         constraints.gridy = 5;
         constraints.gridx = 0;
+        buttonSeeReview1.setEnabled(false);
+        buttonSeeReview2.setEnabled(false);
+        buttonSeeReview3.setEnabled(false);
         articleData.add(buttonSeeReview1, constraints);
         constraints.gridx = 1;
         articleData.add(buttonSeeReview2, constraints);
@@ -138,6 +141,7 @@ public class AuthorTasksPanel extends JPanel {
     protected ArrayList<Submission> submissions = new ArrayList<Submission>();
     
     public void addListeners(JFrame parent) {
+    	AuthorTasksPanel parentSubPanel = this;
     	journalList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (!journalList.isSelectionEmpty()) {
@@ -170,15 +174,19 @@ public class AuthorTasksPanel extends JPanel {
 							versCounter++;
 							label = vers[i];
 						}
+						Boolean shouldEnableButton =((reviewsDone[i] != 0)&&responses[i]==null); 
 						switch(i) {
 							case 0:
-								labelVerdict1.setText("Verdict 1 " + label);
+								labelVerdict1.setText("Verdict 1: " + label);
+								buttonSeeReview1.setEnabled(shouldEnableButton);
 								break;
 							case 1:
-								labelVerdict2.setText("Verdict 2 " + label);
+								labelVerdict2.setText("Verdict 2: " + label);
+								buttonSeeReview2.setEnabled(shouldEnableButton);
 								break;
 							case 2:
-								labelVerdict3.setText("Verdict 3 " + label);
+								labelVerdict3.setText("Verdict 3: " + label);
+								buttonSeeReview3.setEnabled(shouldEnableButton);
 								break;
 							default:
 								break;
@@ -218,6 +226,40 @@ public class AuthorTasksPanel extends JPanel {
         		parent.getContentPane().add(nextPanel);
         		parent.revalidate(); 
         		parent.repaint();
+    		}
+    	});
+    	
+    	buttonSeeReview1.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			Submission selected = submissions.get(journalList.getSelectedIndex());
+				int[] reviewsDone = selected.getReviews();
+				if (reviewsDone[0] != 0) {
+					ViewReviewDialog dlg = new ViewReviewDialog(reviewsDone[0],selected.getSubID());
+	            	dlg.addListeners(parentSubPanel);
+	            	dlg.setVisible(true);
+				}
+    		}
+    	});
+    	buttonSeeReview2.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			Submission selected = submissions.get(journalList.getSelectedIndex());
+				int[] reviewsDone = selected.getReviews();
+				if (reviewsDone[1] != 0) {
+					ViewReviewDialog dlg = new ViewReviewDialog(reviewsDone[1],selected.getSubID());
+	            	dlg.addListeners(parentSubPanel);
+	            	dlg.setVisible(true);
+				}
+    		}
+    	});
+    	buttonSeeReview3.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			Submission selected = submissions.get(journalList.getSelectedIndex());
+				int[] reviewsDone = selected.getReviews();
+				if (reviewsDone[2] != 0) {
+					ViewReviewDialog dlg = new ViewReviewDialog(reviewsDone[2],selected.getSubID());
+	            	dlg.addListeners(parentSubPanel);
+	            	dlg.setVisible(true);
+				}
     		}
     	});
     }
