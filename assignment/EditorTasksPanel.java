@@ -101,7 +101,7 @@ public class EditorTasksPanel extends JPanel {
         journalListScrollPane.setPreferredSize(new Dimension(250, 80));
         
         this.add(journalListScrollPane,BorderLayout.EAST);
-        
+        subs = EditorTasks.getSubmissions();
 		for (Submission s : subs) {
 			listModel.addElement("ISSN: "+s.getJournal()+" subID: "+s.getSubID()+", "+s.getName());
 		}
@@ -143,7 +143,7 @@ public class EditorTasksPanel extends JPanel {
     protected JList<String> editionList;
     
     private DefaultListModel<String> listModel = new DefaultListModel<>();
-	private List<Submission> subs = EditorTasks.getSubmissions();
+	private List<Submission> subs;
 	private DefaultListModel<String> listEditionModel = new DefaultListModel<>();
 	private List<Edition> eds = EditorTasks.getUnpublishedEditions();
     
@@ -261,7 +261,7 @@ public class EditorTasksPanel extends JPanel {
     		}
     	});
     	
-    	buttonAddEditionToJournal.addActionListener(new ActionListener() {
+    	/*buttonAddEditionToJournal.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			//get edition selected
     			//submitted edition
@@ -270,7 +270,7 @@ public class EditorTasksPanel extends JPanel {
     				EditorTasks.publishEdition(valueSelected, , );
     			}
     		}
-    	});
+    	});*/
     	EditorTasksPanel etp = this;
     	buttonManageRoles.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {

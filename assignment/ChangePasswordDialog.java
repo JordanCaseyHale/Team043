@@ -60,9 +60,12 @@ public class ChangePasswordDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				String pass = textNewPass.getText();
 				String confirmPass = textConfirmPass.getText();
-				if (pass.contentEquals(confirmPass)) {
+				if (pass.contentEquals(confirmPass) && !pass.isBlank() ) {
 					Main.changePassword(pass, email);
 					dispose();
+				}
+				else if(pass.isBlank()){
+					labelConfirmPass.setText("Input blank");
 				}
 				else {
 					labelConfirmPass.setText("Inputs don't match");

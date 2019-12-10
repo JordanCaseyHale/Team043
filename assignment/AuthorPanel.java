@@ -98,14 +98,22 @@ public class AuthorPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		//Get information
         		email = textFieldEmail.getText().trim();
+        		if (AuthorTasks.alreadyExists(email)) {
+        			JOptionPane.showMessageDialog(parent,"An author with that email already exists");
+        			return;
+        		}
         		title = textFieldTitle.getText().trim();
         		forename = textFieldForename.getText().trim();
         		surname = textFieldSurname.getText().trim();
         		affiliation = textFieldAffiliation.getText().trim();
         		password = textFieldPassword.getText().trim();
-        		userType = "Editor";
+        		userType = "Editor";	
         		String hashpass = PasswordHash.getHashedString(password);
         		Author author = new Author(title, forename, surname, email, affiliation, hashpass);
+        		if (author.isNotComplete()) {
+        			JOptionPane.showMessageDialog(parent,"Not all fields were filled out.");
+        			return;
+        		}
             	parent.getContentPane().removeAll();
             	SubmissionPanel nextPanel = new SubmissionPanel(author);
             	nextPanel.addListeners(parent);

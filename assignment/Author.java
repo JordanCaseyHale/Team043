@@ -26,6 +26,9 @@ public class Author {
 	}
 	
 	//Get methods
+	public boolean isNotComplete() {
+		return (title.isEmpty() || forename.isEmpty() || surname.isEmpty() || email.isEmpty() || affiliation.isEmpty() || pwhash.isEmpty());
+	}
 	
 	public String getTitle() {
 		return this.title;

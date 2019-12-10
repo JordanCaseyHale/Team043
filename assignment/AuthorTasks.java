@@ -60,6 +60,21 @@ public class AuthorTasks {
 		return result;
 	}
 	
+	public static boolean alreadyExists(String authorEmail) {
+		try(Connection con = DriverManager.getConnection("jdbc:mysql://stusql.dcs.shef.ac.uk/team043","team043","38796815")){
+			PreparedStatement pstmt = con.prepareStatement("SELECT COUNT(Email) FROM submissionAuthors WHERE Email = ?");
+			pstmt.setString(1, authorEmail);
+			ResultSet result = pstmt.executeQuery();
+			if (result.first()) {
+				return result.getInt(1)>0;
+			}
+		}
+		catch (SQLException ex){
+			ex.printStackTrace();
+		}
+		return false;
+	}
+	
 	/**
 	 * Adds given email and reviews allocated to reviewers table
 	 */

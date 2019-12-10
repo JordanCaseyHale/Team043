@@ -129,10 +129,13 @@ public class SubmissionPanel extends JPanel {
 	protected JTextField textFieldPDFLink = new JTextField(30);
 	
 	public void addCoauthor(String title, String forename, String surname, String email, String affiliation, String pwhash) {
-		listModelCoauthors.addElement(title+". "+forename+" "+surname);
-		//ArrayList<String> data = new ArrayList<>(Arrays.asList(title,forename,surname,email,pwhash));
 		//data into author object
 		Author data = new Author(title, forename, surname, email, affiliation, pwhash); 
+		if (data.isNotComplete()) {
+			JOptionPane.showMessageDialog(this,"Not all fields were filled out.");
+			return;
+		}
+		listModelCoauthors.addElement(title+". "+forename+" "+surname);
 		//add author to list of coauthors
 		listCoauthorData.add(data);
 	}
